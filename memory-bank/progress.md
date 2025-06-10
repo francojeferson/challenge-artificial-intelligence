@@ -27,3 +27,19 @@
 
 - Initial focus on modularity, extensibility, and local processing
 - Emphasis on adaptive, user-centered experience and robust documentation
+
+## Success Criteria
+
+- All resource types are correctly ingested, indexed, and retrievable
+- Adaptive prompt engine accurately identifies knowledge gaps and generates relevant content
+- User interface is intuitive and adapts to user preferences
+- All processing is local and privacy-respecting
+- Codebase is modular, extensible, and well-documented
+- All deliverables (including documentation) are complete and meet project requirements
+
+## Risks & Mitigations
+
+- Complexity of resource extraction: Use proven libraries and modular adapters
+- Performance with large datasets: Employ efficient indexing/search solutions
+- User adaptation accuracy: Iteratively test and refine prompt logic
+- Documentation gaps: Enforce documentation as part of the development workflow

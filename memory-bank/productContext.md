@@ -25,3 +25,6 @@ content does not efficiently identify or address individual knowledge gaps.
 - Seamless adaptation to user learning preferences (text, video, audio).
 - Delivery of concise, relevant, and level-appropriate content.
 - Continuous feedback and adaptation based on user interactions.
+- All processing is local and privacy-respecting.
+- Continuous documentation and code quality as part of the user experience.
+- Documentation and code quality are enforced as integral to the user experience.

@@ -4,7 +4,19 @@
 
 - Project initialization and requirements analysis
 - Memory Bank structure and documentation setup
-- Review of README.md and resources/ content
+- Review of README.md, PRD.md, and resources/ content
+- Aligning project documentation and planning with PRD milestones:
+  - Data ingestion & indexing modules (text, PDF, video, image)
+  - Adaptive prompt engine prototype
+  - Content generation module
+  - User interface implementation
+  - Integration & testing
+  - Documentation finalization (including COMMENTS.md with architecture, libraries, improvements, unmet requirements)
+  - Repository management & delivery
+- Enforcing non-functional requirements: all processing is local and privacy-respecting, only open-source and compatible
+  dependencies, modular and maintainable codebase, containerization for isolation
+- Documentation enforcement as a workflow: up-to-date documentation, COMMENTS.md, and traceability to PRD success
+  criteria
 
 ## Recent Changes
 
@@ -13,19 +25,38 @@
 
 ## Next Steps
 
-1. Select and configure indexing tools for each data type (text, PDF, video, image)
+1. Complete selection and configuration of indexing tools for each data type (text, PDF, video, image)
 2. Prototype adaptive prompt logic for user knowledge assessment and content generation
-3. Document architecture and technology decisions in COMMENTS.md
-4. Begin implementation of data ingestion and indexing modules
+3. Implement content generation module
+4. Develop user interface for interactive, adaptive learning
+5. Integrate and test all modules
+6. Finalize documentation (including up-to-date COMMENTS.md with architecture, libraries, design decisions,
+   improvements, unmet requirements)
+7. Repository management and delivery
+8. Ensure all deliverables and milestones meet PRD success criteria and non-functional requirements
 
 ## Active Decisions & Considerations
 
 - Prioritize modular, extensible architecture
 - Ensure all processing is local and privacy-respecting
 - Focus on efficient, relevant search and adaptive content delivery
+- Use Node.js 18+ as the primary technology stack
+- Employ containerization for isolation and reproducibility
+- Use only open-source, compatible dependencies
 
 ## Learnings & Project Insights
 
 - The challenge requires robust handling of diverse educational resources
 - User experience must be adaptive, intuitive, and format-flexible
-- Documentation and code quality are key evaluation criteria
+- Documentation and code quality are key evaluation criteria, enforced as part of the workflow
+- Key risks: complexity of resource extraction, performance with large datasets, user adaptation accuracy, documentation
+  gaps
+- Mitigations: use proven libraries and modular adapters, employ efficient indexing/search, iteratively test/refine
+  prompt logic, enforce documentation as part of workflow
+- PRD success criteria: all resource types are correctly ingested, indexed, and retrievable; adaptive prompt engine
+  accurately identifies knowledge gaps and generates relevant content; user interface is intuitive and adapts to user
+  preferences; all processing is local and privacy-respecting; codebase is modular, extensible, and well-documented; all
+  deliverables (including documentation) are complete and meet project requirements
+- Continuous feedback and adaptation is an active workflow and critical to project success
+- Risk mitigation includes iterative testing and refinement of prompt logic and enforcement of documentation as a core
+  workflow

@@ -2,34 +2,39 @@
 
 ## Technologies Used / Recommended
 
+- **Primary Stack**
+  - Node.js 18+ (required)
+  - Containerization for isolation and reproducibility (e.g., Docker)
 - **Text & PDF Processing**
-  - Python: spaCy, PyPDF2, pdfminer.six, textract
   - Node.js: pdf-parse, natural
+  - Python (optional): spaCy, PyPDF2, pdfminer.six, textract
 - **Video Transcription**
-  - Speech-to-text: OpenAI Whisper, Google Speech-to-Text API, Vosk
+  - Node.js wrappers: OpenAI Whisper, Google Speech-to-Text API, Vosk
 - **Image Metadata Extraction**
-  - Python: Pillow, ExifTool
   - Node.js: sharp, exiftool-vendored
+  - Python (optional): Pillow, ExifTool
 - **Search & Indexing**
-  - ElasticSearch, Whoosh, or vector databases (e.g., FAISS, Pinecone)
+  - ElasticSearch (Node.js client), Pinecone (Node.js client), other JavaScript-based vector DBs
 - **Prompt/Dialogue Engine**
-  - Python: LangChain, OpenAI API, LlamaIndex
-  - Node.js: LangChain.js, LlamaIndex.js
+  - LangChain.js, LlamaIndex.js, OpenAI API (Node.js integration)
 - **General**
   - Modular, extensible codebase
-  - Local processing preferred for privacy
+  - All processing is local and privacy-respecting
 
 ## Development Setup
 
-- Python 3.10+ or Node.js 18+
-- Virtual environment or containerization recommended
-- Requirements.txt or package.json for dependency management
+- Node.js 18+ (primary)
+- Containerization required for isolation and reproducibility (e.g., Docker)
+- package.json for dependency management
+- Python 3.10+ (optional, for some resource adapters)
 
 ## Technical Constraints
 
 - All data processing must be local (no external data sharing)
 - Code must be well-organized, documented, and maintainable
 - Efficient handling of large and diverse datasets
+- Codebase must be modular, extensible, and maintainable
+- Use only open-source, compatible dependencies
 
 ## Tool Usage Patterns
 
@@ -41,3 +46,12 @@
 
 - List all third-party libraries in COMMENTS.md
 - Ensure all dependencies are open-source and compatible with project requirements
+
+## Documentation Requirements
+
+- Maintain up-to-date documentation (including COMMENTS.md) covering:
+  - Architecture
+  - Libraries and dependencies
+  - Design decisions
+  - Improvements and unmet requirements
+- Documentation must be traceable to PRD success criteria and non-functional requirements
