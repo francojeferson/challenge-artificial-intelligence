@@ -40,9 +40,33 @@
 - Prioritize modular, extensible architecture
 - Ensure all processing is local and privacy-respecting
 - Focus on efficient, relevant search and adaptive content delivery
-- Use Node.js 18+ as the primary technology stack
+- Use Python 3.8+ as the primary technology stack
 - Employ containerization for isolation and reproducibility
 - Use only open-source, compatible dependencies
+
+## Milestones & Timeline Alignment
+
+- Project Setup & Documentation (Complete)
+- Data Ingestion & Indexing Modules (Text, PDF, Video, Image)
+- Adaptive Prompt Engine Prototype
+- Content Generation Module
+- User Interface Implementation
+- Integration & Testing
+- Documentation Finalization (including COMMENTS.md)
+- Repository Management & Delivery
+
+## Risks & Mitigations Alignment
+
+- Complexity of resource extraction: Use proven libraries and modular adapters
+- Performance with large datasets: Employ efficient indexing/search solutions
+- User adaptation accuracy: Iteratively test and refine prompt logic
+- Documentation gaps: Enforce documentation as part of the development workflow
+
+## Non-Functional Requirements Emphasis
+
+- All processing is local and privacy-respecting
+- Codebase is modular, extensible, and maintainable
+- Continuous feedback and adaptation are integral to the workflow
 
 ## Learnings & Project Insights
 

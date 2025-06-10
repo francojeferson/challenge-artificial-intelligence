@@ -27,6 +27,7 @@
 
 - Initial focus on modularity, extensibility, and local processing
 - Emphasis on adaptive, user-centered experience and robust documentation
+- Shifted primary technology stack to Python 3.8+ for better alignment with PRD
 
 ## Success Criteria
 

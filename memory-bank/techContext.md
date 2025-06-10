@@ -3,30 +3,27 @@
 ## Technologies Used / Recommended
 
 - **Primary Stack**
-  - Node.js 18+ (required)
+  - Python 3.8+ (required)
   - Containerization for isolation and reproducibility (e.g., Docker)
 - **Text & PDF Processing**
-  - Node.js: pdf-parse, natural
-  - Python (optional): spaCy, PyPDF2, pdfminer.six, textract
+  - PyPDF2, pdfminer.six, nltk, spaCy, textract
 - **Video Transcription**
-  - Node.js wrappers: OpenAI Whisper, Google Speech-to-Text API, Vosk
+  - OpenAI Whisper (Python), Google Speech-to-Text API (Python client), Vosk (Python)
 - **Image Metadata Extraction**
-  - Node.js: sharp, exiftool-vendored
-  - Python (optional): Pillow, ExifTool
+  - Pillow, exifread
 - **Search & Indexing**
-  - ElasticSearch (Node.js client), Pinecone (Node.js client), other JavaScript-based vector DBs
+  - Elasticsearch (Python client), Pinecone (Python client), other Python-based vector DBs
 - **Prompt/Dialogue Engine**
-  - LangChain.js, LlamaIndex.js, OpenAI API (Node.js integration)
+  - LangChain, LlamaIndex, OpenAI API (Python integration)
 - **General**
   - Modular, extensible codebase
   - All processing is local and privacy-respecting
 
 ## Development Setup
 
-- Node.js 18+ (primary)
+- Python 3.8+ (primary)
 - Containerization required for isolation and reproducibility (e.g., Docker)
-- package.json for dependency management
-- Python 3.10+ (optional, for some resource adapters)
+- requirements.txt or poetry for dependency management
 
 ## Technical Constraints
 

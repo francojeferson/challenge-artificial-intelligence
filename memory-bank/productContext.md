@@ -28,3 +28,9 @@ content does not efficiently identify or address individual knowledge gaps.
 - All processing is local and privacy-respecting.
 - Continuous documentation and code quality as part of the user experience.
 - Documentation and code quality are enforced as integral to the user experience.
+
+## Core Product Values
+
+- Modularity and extensibility to support new resource types and learning strategies.
+- Well-documented codebase and architecture for maintainability and review.
+- Privacy-respecting local processing as a fundamental principle.

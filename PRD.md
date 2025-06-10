@@ -110,9 +110,9 @@ flowchart TD
 ### 7.2 Key Components
 
 - **Data Ingestion**: Adapters for each resource type (pipeline pattern).
-- **Indexing & Search**: Keyword and semantic search (ElasticSearch [Node.js client], Pinecone [Node.js client], other
-  JavaScript-based vector DBs).
-- **Prompt Engine**: Dialogue system (LangChain.js, LlamaIndex.js, OpenAI API [Node.js integration]).
+- **Indexing & Search**: Keyword and semantic search (Elasticsearch [Python client], Pinecone [Python client], other
+  Python-based vector DBs).
+- **Prompt Engine**: Dialogue system (LangChain, LlamaIndex, OpenAI API [Python integration]).
 - **Content Generation**: Dynamic, format-adaptive content creation.
 - **User Interface**: Conversational, adaptive, and feedback-driven.
 
@@ -128,14 +128,14 @@ flowchart TD
 
 ## 8. Technology Stack
 
-- **Node.js 18+**
-- Text/PDF: pdf-parse, natural
-- Video: Node.js wrappers for OpenAI Whisper, Google Speech-to-Text API, Vosk (if available)
-- Image: sharp, exiftool-vendored
-- Search: ElasticSearch (Node.js client), Pinecone (Node.js client), other JavaScript-based vector DBs
-- Prompt Engine: LangChain.js, LlamaIndex.js, OpenAI API (Node.js integration)
-- Containerization for isolation
-- Dependency management via package.json
+- **Python 3.8+**
+- Text/PDF: PyPDF2, pdfminer.six, nltk, spaCy
+- Video: OpenAI Whisper (Python), Google Speech-to-Text API (Python client), Vosk (Python)
+- Image: Pillow, exifread
+- Search: Elasticsearch (Python client), Pinecone (Python client), FAISS, other Python-based vector DBs
+- Prompt Engine: LangChain, LlamaIndex, OpenAI API (Python integration)
+- Containerization for isolation (Docker)
+- Dependency management via requirements.txt or poetry
 
 ---
 

@@ -17,20 +17,21 @@ flowchart TD
   - PDF: Text extraction using OCR or PDF parsers.
   - Video: Audio transcription (speech-to-text) and metadata extraction.
   - Image: Metadata and tag extraction.
-  - Libraries/Tools: pdf-parse, natural, sharp, exiftool-vendored, OpenAI Whisper, Google Speech-to-Text API, Vosk
+  - Libraries/Tools: PyPDF2, pdfminer.six, nltk, spaCy, Pillow, exifread, OpenAI Whisper (Python), Google Speech-to-Text
+    API (Python client), Vosk (Python)
 
 - **Indexing & Search**
 
   - All resources indexed for keyword and semantic search.
   - Support for efficient retrieval by type, topic, and relevance.
-  - Libraries/Tools: ElasticSearch (Node.js client), Pinecone (Node.js client), other JavaScript-based vector DBs
+  - Libraries/Tools: Elasticsearch (Python client), Pinecone (Python client), other Python-based vector DBs
 
 - **Adaptive Prompt Engine**
 
   - Interactive dialogue system to assess user knowledge and preferences.
   - Identifies knowledge gaps and learning styles.
   - Generates dynamic, short-form content in multiple formats (text, video, audio).
-  - Libraries/Tools: LangChain.js, LlamaIndex.js, OpenAI API (Node.js integration)
+  - Libraries/Tools: LangChain, LlamaIndex, OpenAI API (Python integration)
 
 - **Content Generation**
 
