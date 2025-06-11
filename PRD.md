@@ -91,6 +91,9 @@ lack dynamic, user-tailored content generation.
 - Efficient handling of large and diverse datasets.
 - Use only open-source, compatible dependencies.
 - High code quality with clear documentation and comments.
+- **Active Enforcement**: Emphasis on local processing and privacy-respecting practices, ensuring that all dependencies
+  align with open-source standards, and integrating continuous feedback and adaptation as a core part of the development
+  workflow.
 
 ---
 
@@ -142,7 +145,7 @@ flowchart TD
 ## 9. Milestones & Timeline
 
 1. **Project Setup & Documentation** (Complete)
-2. **Data Ingestion & Indexing Modules** (Text, PDF, Video, Image)
+2. **Data Ingestion & Indexing Modules** (Text, PDF, Video, Image) - In Progress
 3. **Adaptive Prompt Engine Prototype**
 4. **Content Generation Module**
 5. **User Interface Implementation**
@@ -167,8 +170,9 @@ flowchart TD
 
 - **Complexity of resource extraction**: Use proven libraries and modular adapters.
 - **Performance with large datasets**: Employ efficient indexing/search solutions.
-- **User adaptation accuracy**: Iteratively test and refine prompt logic.
-- **Documentation gaps**: Enforce documentation as part of the development workflow.
+- **User adaptation accuracy**: Iteratively test and refine prompt logic through continuous feedback and adaptation.
+- **Documentation gaps**: Enforce documentation as a core part of the development workflow to ensure traceability to PRD
+  success criteria and maintain up-to-date records of architecture, decisions, and improvements.
 
 ---
 

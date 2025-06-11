@@ -1,0 +1,32 @@
+# Core Python requirements for Adaptive Learning System
+
+# Text & PDF processing
+nltk
+spacy
+PyPDF2
+pdfminer.six
+textract
+
+# Video transcription
+openai-whisper
+vosk
+
+# Image metadata extraction
+Pillow
+exifread
+
+# Search & indexing
+elasticsearch
+pinecone-client
+faiss-cpu
+
+# Prompt/dialogue engine
+langchain
+llama-index
+
+# Web UI (optional, for future extension)
+flask
+fastapi
+
+# General
+tqdm
