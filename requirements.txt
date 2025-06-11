@@ -16,7 +16,7 @@ pytesseract>=0.3.8
 
 # Video processing libraries
 moviepy>=1.0.3
-whisper>=20230124
+vosk>=0.3.45
 
 # Image processing libraries
 Pillow>=8.3.1
@@ -27,8 +27,4 @@ faiss-cpu>=1.7.2
 sentence-transformers>=2.2.0
 
 # General utilities
-json>=2.0.9
-os>=0.1.0
-tempfile>=0.1.0
-typing>=3.7.4.3
-datetime>=4.3
+# Standard library modules are not listed as they are included with Python

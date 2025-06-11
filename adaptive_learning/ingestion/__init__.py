@@ -22,6 +22,7 @@ from .text_ingestor import ingest_text_file, ingest_text_directory
 from .pdf_ingestor import ingest_pdf_file, ingest_pdf_directory
 from .video_ingestor import ingest_video_file, ingest_video_directory
 from .image_ingestor import ingest_image_file, ingest_image_directory
+from .resource_ingestor import ResourceIngestor
 
 __all__ = [
     "ingest_text_file",
@@ -32,4 +33,5 @@ __all__ = [
     "ingest_video_directory",
     "ingest_image_file",
     "ingest_image_directory",
+    "ResourceIngestor",
 ]

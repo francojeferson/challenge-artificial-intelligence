@@ -9,12 +9,17 @@
 - Data ingestion modules for text, PDF, video, and image resources updated with enhanced content extraction and metadata
   handling
 - Initial implementation of indexing functionality with index_manager.py
-- Updated run.py to integrate ingestion modules and build an index for search functionality
-- Refined requirements.txt with dependencies for data processing, text, PDF, video, and image handling
+- Updated run.py to integrate ingestion modules and build an index for search functionality, now also ingesting
+  resources directly from the `resources/` directory if subdirectories are empty
+- Refined requirements.txt with dependencies for data processing, text, PDF, video, and image handling, replacing
+  `whisper` with `vosk`
+- Successfully resolved dependency issues and import errors, allowing `run.py` to execute without errors
+- Created `ResourceIngestor` class to manage ingestion of various resource types
 
 ## What's Left to Build
 
 - Completion of indexing module for efficient resource retrieval using index_manager.py
+- Verification that resources are now being ingested correctly with the updated `run.py`
 - Adaptive prompt engine for user knowledge assessment and content generation
 - Integration of search, retrieval, and content generation components
 - User interface for interactive, adaptive learning experience
@@ -23,7 +28,9 @@
 ## Current Status
 
 - Project is in the technical implementation phase
-- Significant progress on data ingestion and indexing modules for all resource types
+- Significant progress on data ingestion and indexing modules for all resource types, with `run.py` now executing
+  successfully
+- Ingestion process reports 0 resources ingested, which needs further investigation
 
 ## Known Issues
 
@@ -38,6 +45,9 @@
 - Enhanced ingestion modules to improve content extraction (e.g., OCR for scanned PDFs, better metadata extraction for
   images and videos)
 - Added indexing capabilities to support efficient search and retrieval as a foundation for adaptive learning
+- Adapted video ingestion to use `vosk` instead of `whisper` due to dependency issues, with instructions for model setup
+- Created `ResourceIngestor` to manage ingestion processes, resolving import errors
+- Updated `run.py` to handle resources directly in the `resources/` directory to address ingestion issues
 
 ## Success Criteria
 

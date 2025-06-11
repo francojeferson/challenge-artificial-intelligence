@@ -4,8 +4,10 @@
 
 - Technical implementation of data ingestion and indexing modules for all resource types (text, PDF, video, image)
 - Development of indexing functionality with the addition of index_manager.py
+- Resolving dependency and import issues to ensure `run.py` executes successfully
 - Aligning project development with PRD milestones:
-  - Data ingestion & indexing modules (text, PDF, video, image) - Significant progress
+  - Data ingestion & indexing modules (text, PDF, video, image) - Significant progress, with successful execution of
+    ingestion scripts
   - Adaptive prompt engine prototype
   - Content generation module
   - User interface implementation
@@ -25,20 +27,28 @@
 - Updated ingestion modules for text, PDF, video, and image resources with enhanced content extraction and metadata
   handling
 - Added index_manager.py to support indexing functionality
-- Updated requirements.txt with refined dependencies for data processing, text, PDF, video, and image handling
+- Updated requirements.txt with refined dependencies for data processing, text, PDF, video, and image handling,
+  replacing `whisper` with `vosk` due to installation issues
 - Enhanced run.py to integrate ingestion modules and build an index for search functionality
+- Created `resource_ingestor.py` to define `ResourceIngestor` class for managing ingestion of various resource types
+- Updated `video_ingestor.py` to use `vosk` for video transcription and provided instructions for Vosk model setup
+- Resolved multiple `ModuleNotFoundError` and `ImportError` issues to ensure `run.py` executes successfully
+- Updated `run.py` to ingest resources directly from the `resources/` directory if specific subdirectories are empty or
+  do not exist
 
 ## Next Steps
 
 1. Complete the indexing module implementation using index_manager.py for efficient resource retrieval
-2. Prototype adaptive prompt logic for user knowledge assessment and content generation
-3. Implement content generation module
-4. Develop user interface for interactive, adaptive learning
-5. Integrate and test all modules
-6. Finalize documentation (including up-to-date COMMENTS.md with architecture, libraries, design decisions,
+2. Investigate why no resources are being ingested (reported 0 for each type) and ensure resources are correctly placed
+   in expected directories
+3. Prototype adaptive prompt logic for user knowledge assessment and content generation
+4. Implement content generation module
+5. Develop user interface for interactive, adaptive learning
+6. Integrate and test all modules
+7. Finalize documentation (including up-to-date COMMENTS.md with architecture, libraries, design decisions,
    improvements, unmet requirements)
-7. Repository management and delivery
-8. Ensure all deliverables and milestones meet PRD success criteria and non-functional requirements
+8. Repository management and delivery
+9. Ensure all deliverables and milestones meet PRD success criteria and non-functional requirements
 
 ## Active Decisions & Considerations
 

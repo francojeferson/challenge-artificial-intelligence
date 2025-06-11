@@ -17,7 +17,9 @@ Dependencies:
 
 import os
 from typing import Dict, List, Any
-import whisper
+import vosk
+import wave
+import json
 from moviepy.editor import VideoFileClip
 import tempfile
 
@@ -65,34 +67,60 @@ def ingest_video_file(file_path: str) -> Dict[str, Any]:
             os.remove(audio_path)
         return {}
 
-    # Transcribe audio using Whisper
+    # Transcribe audio using Vosk
     content = ""
     try:
-        model = whisper.load_model(
-            "small"
-        )  # Use 'small' model for better accuracy in local processing
-        result = model.transcribe(audio_path, fp16=False)
-        content = result["text"]
-        metadata["language"] = result.get("language", "unknown")
-        # Extract segments with timestamps if available
-        if "segments" in result:
-            segments = []
-            for seg in result["segments"]:
-                start = seg.get("start", 0)
-                end = seg.get("end", 0)
-                text = seg.get("text", "")
-                segments.append(f"[{start:.1f}s - {end:.1f}s]: {text}")
+        # Ensure the audio is in WAV format with correct parameters for Vosk
+        wf = wave.open(audio_path, "rb")
+        if (
+            wf.getnchannels() != 1
+            or wf.getsampwidth() != 2
+            or wf.getframerate() not in [16000, 44100]
+        ):
+            print(f"Audio format not supported for {file_path}. Converting...")
+            # Conversion logic could be added here if needed
+            raise ValueError("Audio must be mono, 16-bit, and 16000 or 44100 Hz")
+
+        # Initialize Vosk model (assuming a model is available in the specified path)
+        model_path = "model"  # Replace with actual path to Vosk model
+        if not os.path.exists(model_path):
+            print(
+                f"Error: Vosk model not found at {model_path}. Please download a Vosk model from https://alphacephei.com/vosk/models and update the model_path in video_ingestor.py."
+            )
+            raise FileNotFoundError(
+                f"Vosk model not found at {model_path}. Please update model_path in video_ingestor.py with the correct path to a Vosk model."
+            )
+
+        model = vosk.Model(model_path)
+        rec = vosk.KaldiRecognizer(model, wf.getframerate())
+        rec.SetWords(True)
+
+        # Process audio
+        segments = []
+        while True:
+            data = wf.readframes(4000)
+            if len(data) == 0:
+                break
+            if rec.AcceptWaveform(data):
+                result = json.loads(rec.Result())
+                if "result" in result:
+                    for word in result["result"]:
+                        start = word.get("start", 0)
+                        end = word.get("end", 0)
+                        text = word.get("word", "")
+                        segments.append(f"[{start:.1f}s - {end:.1f}s]: {text}")
+                content += result.get("text", "") + " "
+            else:
+                partial = json.loads(rec.PartialResult())
+                content += partial.get("partial", "") + " "
+
+        if segments:
             content = "\n".join(segments)
+        metadata["language"] = (
+            "unknown"  # Vosk does not provide language detection by default
+        )
     except Exception as e:
         print(f"Error transcribing audio from {file_path}: {e}")
-        # Fallback to 'base' model if 'small' fails
-        try:
-            model = whisper.load_model("base")
-            result = model.transcribe(audio_path, fp16=False)
-            content = result["text"]
-            metadata["language"] = result.get("language", "unknown")
-        except Exception as e2:
-            print(f"Fallback transcription failed for {file_path}: {e2}")
     finally:
         if audio_path and os.path.exists(audio_path):
             os.remove(audio_path)

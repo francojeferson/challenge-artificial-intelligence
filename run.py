@@ -27,19 +27,73 @@ def main():
     print("Starting resource ingestion process...")
 
     # Ingest all types of resources from their respective directories
-    text_data = ingest_text_directory(os.path.join(resources_dir, "text"))
+    text_dir = os.path.join(resources_dir, "text")
+    if os.path.exists(text_dir) and len(os.listdir(text_dir)) > 0:
+        text_data = ingest_text_directory(text_dir)
+    else:
+        # Check root resources directory for text files
+        text_data = []
+        for file in os.listdir(resources_dir):
+            if file.endswith((".txt", ".json")):
+                file_path = os.path.join(resources_dir, file)
+                if os.path.isfile(file_path):
+                    from adaptive_learning.ingestion.text_ingestor import (
+                        ingest_text_file,
+                    )
+
+                    text_data.append(ingest_text_file(file_path))
     all_resources.extend(text_data)
     print(f"Ingested {len(text_data)} text resources.")
 
-    pdf_data = ingest_pdf_directory(os.path.join(resources_dir, "pdf"))
+    pdf_dir = os.path.join(resources_dir, "pdf")
+    if os.path.exists(pdf_dir) and len(os.listdir(pdf_dir)) > 0:
+        pdf_data = ingest_pdf_directory(pdf_dir)
+    else:
+        # Check root resources directory for PDF files
+        pdf_data = []
+        for file in os.listdir(resources_dir):
+            if file.endswith(".pdf"):
+                file_path = os.path.join(resources_dir, file)
+                if os.path.isfile(file_path):
+                    from adaptive_learning.ingestion.pdf_ingestor import ingest_pdf_file
+
+                    pdf_data.append(ingest_pdf_file(file_path))
     all_resources.extend(pdf_data)
     print(f"Ingested {len(pdf_data)} PDF resources.")
 
-    video_data = ingest_video_directory(os.path.join(resources_dir, "video"))
+    video_dir = os.path.join(resources_dir, "video")
+    if os.path.exists(video_dir) and len(os.listdir(video_dir)) > 0:
+        video_data = ingest_video_directory(video_dir)
+    else:
+        # Check root resources directory for video files
+        video_data = []
+        for file in os.listdir(resources_dir):
+            if file.endswith((".mp4", ".avi", ".mkv")):
+                file_path = os.path.join(resources_dir, file)
+                if os.path.isfile(file_path):
+                    from adaptive_learning.ingestion.video_ingestor import (
+                        ingest_video_file,
+                    )
+
+                    video_data.append(ingest_video_file(file_path))
     all_resources.extend(video_data)
     print(f"Ingested {len(video_data)} video resources.")
 
-    image_data = ingest_image_directory(os.path.join(resources_dir, "image"))
+    image_dir = os.path.join(resources_dir, "image")
+    if os.path.exists(image_dir) and len(os.listdir(image_dir)) > 0:
+        image_data = ingest_image_directory(image_dir)
+    else:
+        # Check root resources directory for image files
+        image_data = []
+        for file in os.listdir(resources_dir):
+            if file.endswith((".jpg", ".jpeg", ".png", ".bmp")):
+                file_path = os.path.join(resources_dir, file)
+                if os.path.isfile(file_path):
+                    from adaptive_learning.ingestion.image_ingestor import (
+                        ingest_image_file,
+                    )
+
+                    image_data.append(ingest_image_file(file_path))
     all_resources.extend(image_data)
     print(f"Ingested {len(image_data)} image resources.")
 
