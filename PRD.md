@@ -145,7 +145,8 @@ flowchart TD
 ## 9. Milestones & Timeline
 
 1. **Project Setup & Documentation** (Complete)
-2. **Data Ingestion & Indexing Modules** (Text, PDF, Video, Image) - In Progress
+2. **Data Ingestion & Indexing Modules** (Text, PDF, Video, Image) - Significant Progress with updates to ingestion
+   modules for all resource types
 3. **Adaptive Prompt Engine Prototype**
 4. **Content Generation Module**
 5. **User Interface Implementation**

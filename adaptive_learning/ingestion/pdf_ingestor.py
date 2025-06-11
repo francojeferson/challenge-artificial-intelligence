@@ -40,6 +40,7 @@ def ingest_pdf_file(file_path: str) -> Dict[str, Any]:
         "size_bytes": os.path.getsize(file_path),
         "last_modified": os.path.getmtime(file_path),
         "page_count": 0,
+        "resource_type": "pdf",
     }
 
     try:
@@ -47,26 +48,45 @@ def ingest_pdf_file(file_path: str) -> Dict[str, Any]:
         with open(file_path, "rb") as file:
             reader = PyPDF2.PdfReader(file)
             metadata["page_count"] = len(reader.pages)
-            if "/Title" in reader.metadata:
+            if reader.metadata:
                 metadata["title"] = reader.metadata.get("/Title", "")
-            if "/Author" in reader.metadata:
                 metadata["author"] = reader.metadata.get("/Author", "")
-            # Extract text from first few pages as a fallback
-            content_fallback = ""
-            for i in range(min(3, len(reader.pages))):
-                content_fallback += reader.pages[i].extract_text() + "\n"
+                metadata["subject"] = reader.metadata.get("/Subject", "")
+                metadata["keywords"] = reader.metadata.get("/Keywords", "")
+            # Extract text page by page as a fallback and for structuring
+            content_fallback = []
+            for i in range(len(reader.pages)):
+                page_text = reader.pages[i].extract_text()
+                content_fallback.append(f"Page {i+1}:\n{page_text}\n")
     except Exception as e:
         print(f"Error reading PDF metadata with PyPDF2 for {file_path}: {e}")
-        content_fallback = ""
+        content_fallback = []
 
     try:
         # Use pdfminer.six for more accurate text extraction
         content = extract_text(file_path)
         if not content.strip():
-            content = content_fallback  # Fallback to PyPDF2 content if pdfminer fails
+            content = "\n".join(content_fallback) if content_fallback else ""
     except Exception as e:
         print(f"Error extracting text with pdfminer for {file_path}: {e}")
-        content = content_fallback if content_fallback else ""
+        content = "\n".join(content_fallback) if content_fallback else ""
+
+    # Attempt OCR if no content is extracted (for scanned PDFs)
+    if not content.strip():
+        try:
+            import pytesseract
+            from pdf2image import convert_from_path
+
+            print(f"Attempting OCR for scanned PDF {file_path}")
+            pages = convert_from_path(file_path)
+            content_list = []
+            for i, page in enumerate(pages):
+                text = pytesseract.image_to_string(page, lang="eng")
+                content_list.append(f"Page {i+1}:\n{text}\n")
+            content = "\n".join(content_list)
+        except Exception as e:
+            print(f"Error performing OCR on {file_path}: {e}")
+            content = ""
 
     if not content:
         print(f"Warning: No content extracted from {file_path}")

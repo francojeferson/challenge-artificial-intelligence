@@ -60,6 +60,7 @@ def ingest_text_file(file_path: str) -> Dict[str, Any]:
         "file_type": file_extension,
         "size_bytes": os.path.getsize(file_path),
         "last_modified": os.path.getmtime(file_path),
+        "resource_type": "text",
     }
 
     try:
@@ -71,7 +72,8 @@ def ingest_text_file(file_path: str) -> Dict[str, Any]:
                 content = file.read()
     except Exception as e:
         print(f"Error reading file {file_path}: {e}")
-        return {}
+        metadata["error"] = str(e)
+        return {"metadata": metadata, "content": "", "processed_content": ""}
 
     # Process text content using NLTK and spaCy if available
     processed_data = process_text_content(content)
@@ -108,7 +110,7 @@ def process_text_content(content: str) -> Dict[str, Any]:
         metadata["token_count"] = 0
         metadata["pos_distribution"] = {}
 
-    # Entity recognition with spaCy if available
+    # Entity recognition and keyword extraction with spaCy if available
     if nlp:
         try:
             doc = nlp(
@@ -116,11 +118,35 @@ def process_text_content(content: str) -> Dict[str, Any]:
             )  # Limit to first 10000 characters for performance
             entities = [(ent.text, ent.label_) for ent in doc.ents]
             metadata["entities"] = entities[:50]  # Limit to first 50 entities
+
+            # Extract keywords based on nouns and proper nouns
+            keywords = [
+                token.text
+                for token in doc
+                if token.pos_ in ["NOUN", "PROPN"] and not token.is_stop
+            ]
+            metadata["keywords"] = list(
+                set(keywords[:20])
+            )  # Limit to top 20 unique keywords
         except Exception as e:
             print(f"Error processing text with spaCy: {e}")
             metadata["entities"] = []
+            metadata["keywords"] = []
     else:
         metadata["entities"] = []
+        metadata["keywords"] = []
+
+    # Summarize content for longer texts
+    try:
+        if len(content) > 500:  # Summarize if content is longer than 500 characters
+            sentences = nltk.sent_tokenize(content)
+            summary = " ".join(sentences[:3])  # Take first 3 sentences as summary
+            metadata["summary"] = summary
+        else:
+            metadata["summary"] = content
+    except Exception as e:
+        print(f"Error summarizing content: {e}")
+        metadata["summary"] = content[:200] if len(content) > 200 else content
 
     return {"processed_content": processed_content, "metadata": metadata}
 

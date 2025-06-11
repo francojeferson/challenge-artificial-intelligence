@@ -1,32 +1,34 @@
-# Core Python requirements for Adaptive Learning System
+# Requirements for Adaptive Learning System
 
-# Text & PDF processing
-nltk
-spacy
-PyPDF2
-pdfminer.six
-textract
+# Core dependencies for data processing
+numpy>=1.21.0
+pandas>=1.3.0
 
-# Video transcription
-openai-whisper
-vosk
+# Text processing libraries
+nltk>=3.6.2
+spacy>=3.1.0
 
-# Image metadata extraction
-Pillow
-exifread
+# PDF processing libraries
+PyPDF2>=2.0.0
+pdfminer.six>=20201018
+pdf2image>=1.16.0
+pytesseract>=0.3.8
 
-# Search & indexing
-elasticsearch
-pinecone-client
-faiss-cpu
+# Video processing libraries
+moviepy>=1.0.3
+whisper>=20230124
 
-# Prompt/dialogue engine
-langchain
-llama-index
+# Image processing libraries
+Pillow>=8.3.1
+exifread>=2.3.2
 
-# Web UI (optional, for future extension)
-flask
-fastapi
+# Indexing and search libraries
+faiss-cpu>=1.7.2
+sentence-transformers>=2.2.0
 
-# General
-tqdm
+# General utilities
+json>=2.0.9
+os>=0.1.0
+tempfile>=0.1.0
+typing>=3.7.4.3
+datetime>=4.3

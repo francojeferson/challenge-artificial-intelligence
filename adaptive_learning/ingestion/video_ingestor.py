@@ -41,13 +41,18 @@ def ingest_video_file(file_path: str) -> Dict[str, Any]:
         "size_bytes": os.path.getsize(file_path),
         "last_modified": os.path.getmtime(file_path),
         "duration_seconds": 0,
+        "resolution": "",
+        "fps": 0,
+        "resource_type": "video",
     }
 
-    # Extract audio from video
+    # Extract audio and metadata from video
     audio_path = None
     try:
         video = VideoFileClip(file_path)
         metadata["duration_seconds"] = video.duration
+        metadata["resolution"] = f"{video.w}x{video.h}"
+        metadata["fps"] = video.fps
         with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_audio:
             audio_path = temp_audio.name
             video.audio.write_audiofile(
@@ -63,12 +68,31 @@ def ingest_video_file(file_path: str) -> Dict[str, Any]:
     # Transcribe audio using Whisper
     content = ""
     try:
-        model = whisper.load_model("base")  # Use 'base' model for local processing
+        model = whisper.load_model(
+            "small"
+        )  # Use 'small' model for better accuracy in local processing
         result = model.transcribe(audio_path, fp16=False)
         content = result["text"]
         metadata["language"] = result.get("language", "unknown")
+        # Extract segments with timestamps if available
+        if "segments" in result:
+            segments = []
+            for seg in result["segments"]:
+                start = seg.get("start", 0)
+                end = seg.get("end", 0)
+                text = seg.get("text", "")
+                segments.append(f"[{start:.1f}s - {end:.1f}s]: {text}")
+            content = "\n".join(segments)
     except Exception as e:
         print(f"Error transcribing audio from {file_path}: {e}")
+        # Fallback to 'base' model if 'small' fails
+        try:
+            model = whisper.load_model("base")
+            result = model.transcribe(audio_path, fp16=False)
+            content = result["text"]
+            metadata["language"] = result.get("language", "unknown")
+        except Exception as e2:
+            print(f"Fallback transcription failed for {file_path}: {e2}")
     finally:
         if audio_path and os.path.exists(audio_path):
             os.remove(audio_path)

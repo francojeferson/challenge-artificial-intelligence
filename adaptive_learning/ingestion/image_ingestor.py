@@ -28,7 +28,7 @@ def ingest_image_file(file_path: str) -> Dict[str, Any]:
         file_path (str): Path to the image file.
 
     Returns:
-        Dict[str, Any]: Dictionary containing metadata and placeholder content.
+        Dict[str, Any]: Dictionary containing metadata and inferred content description.
     """
     file_name = os.path.basename(file_path)
     file_extension = os.path.splitext(file_path)[1].lower()
@@ -40,6 +40,7 @@ def ingest_image_file(file_path: str) -> Dict[str, Any]:
         "last_modified": os.path.getmtime(file_path),
         "width": 0,
         "height": 0,
+        "resource_type": "image",
     }
 
     # Extract basic image metadata using PIL
@@ -64,8 +65,26 @@ def ingest_image_file(file_path: str) -> Dict[str, Any]:
     except Exception as e:
         print(f"Error reading EXIF data for {file_path}: {e}")
 
-    # Placeholder for content - images don't have direct text content
+    # Infer content description and tags from file name and directory structure
     content = f"Image file: {file_name}"
+    inferred_tags = []
+    try:
+        # Extract potential tags from file name (split by non-alphanumeric characters)
+        name_parts = "".join(c if c.isalnum() else " " for c in file_name).split()
+        inferred_tags.extend([part.lower() for part in name_parts if len(part) > 2])
+
+        # Extract potential tags from directory name
+        dir_name = os.path.basename(os.path.dirname(file_path))
+        dir_parts = "".join(c if c.isalnum() else " " for c in dir_name).split()
+        inferred_tags.extend([part.lower() for part in dir_parts if len(part) > 2])
+
+        # Remove duplicates and limit to top 10 tags
+        inferred_tags = list(set(inferred_tags))[:10]
+        metadata["inferred_tags"] = inferred_tags
+        content = f"Image file: {file_name} (Tags: {', '.join(inferred_tags)})"
+    except Exception as e:
+        print(f"Error inferring tags for {file_path}: {e}")
+        metadata["inferred_tags"] = []
 
     return {"metadata": metadata, "content": content, "processed_content": content}
 
