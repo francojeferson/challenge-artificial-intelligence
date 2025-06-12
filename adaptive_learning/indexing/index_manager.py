@@ -35,7 +35,10 @@ class IndexManager:
         """
         self.index_file_path = index_file_path
         self.index_data: List[Dict[str, Any]] = []
+        self.embedder = None
+        self.vector_index = None
         self.load_index()
+        self.initialize_vector_index()
 
     def load_index(self) -> None:
         """
@@ -271,8 +274,11 @@ class IndexManager:
             List[Dict[str, Any]]: List of matching resources ordered by similarity.
         """
         if not self.embedder or not self.vector_index:
-            print("Semantic search not available. Vector index not initialized.")
-            return []
+            print("Semantic search not available. Initializing vector index now...")
+            self.initialize_vector_index()
+            if not self.embedder or not self.vector_index:
+                print("Failed to initialize vector index for semantic search.")
+                return []
 
         try:
             import numpy as np

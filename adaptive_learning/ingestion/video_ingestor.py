@@ -64,11 +64,9 @@ def ingest_video_file(file_path: str) -> Dict[str, Any]:
     except Exception as e:
         print(f"Error extracting audio from video {file_path}: {e}")
         if audio_path and os.path.exists(audio_path):
-            try:
-                os.remove(audio_path)
-            except Exception as delete_error:
+            if not delete_temp_file_with_retry(audio_path):
                 print(
-                    f"Warning: Could not delete temporary file {audio_path}: {delete_error}"
+                    f"Warning: Could not delete temporary file {audio_path} after multiple attempts."
                 )
         metadata["error"] = "Failed to extract audio from video"
         return {"metadata": metadata, "content": "", "processed_content": ""}
@@ -88,11 +86,9 @@ def ingest_video_file(file_path: str) -> Dict[str, Any]:
             converted_audio_path = convert_audio_format(audio_path)
             if converted_audio_path:
                 if audio_path and os.path.exists(audio_path):
-                    try:
-                        os.remove(audio_path)
-                    except Exception as delete_error:
+                    if not delete_temp_file_with_retry(audio_path):
                         print(
-                            f"Warning: Could not delete temporary file {audio_path}: {delete_error}"
+                            f"Warning: Could not delete temporary file {audio_path} after multiple attempts."
                         )
                 audio_path = converted_audio_path
                 wf = wave.open(audio_path, "rb")
@@ -165,11 +161,9 @@ def ingest_video_file(file_path: str) -> Dict[str, Any]:
         print(f"Error transcribing audio from {file_path}: {e}")
     finally:
         if audio_path and os.path.exists(audio_path):
-            try:
-                os.remove(audio_path)
-            except Exception as delete_error:
+            if not delete_temp_file_with_retry(audio_path):
                 print(
-                    f"Warning: Could not delete temporary file {audio_path}: {delete_error}"
+                    f"Warning: Could not delete temporary file {audio_path} after multiple attempts."
                 )
 
     if not content:
@@ -178,6 +172,32 @@ def ingest_video_file(file_path: str) -> Dict[str, Any]:
         return {"metadata": metadata, "content": "", "processed_content": ""}
 
     return {"metadata": metadata, "content": content, "processed_content": content}
+
+
+def delete_temp_file_with_retry(
+    file_path: str, max_retries: int = 5, delay: float = 0.5
+) -> bool:
+    """
+    Attempt to delete a temporary file with retries to handle access conflicts.
+
+    Args:
+        file_path (str): Path to the file to delete.
+        max_retries (int): Maximum number of deletion attempts.
+        delay (float): Delay in seconds between attempts.
+
+    Returns:
+        bool: True if deletion was successful, False otherwise.
+    """
+    import time
+
+    for attempt in range(max_retries):
+        try:
+            os.remove(file_path)
+            return True
+        except Exception:
+            if attempt < max_retries - 1:
+                time.sleep(delay)
+    return False
 
 
 def convert_audio_format(input_path: str) -> str:

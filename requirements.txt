@@ -21,7 +21,11 @@ pyaudio>=0.2.11
 Pillow>=8.0.0
 exifread>=2.3.2
 
-# Indexing and search (optional, uncomment if used)
+# Indexing and search
+faiss-cpu>=1.7.2  # For FAISS vector index used in semantic search
+sentence-transformers>=2.2.2  # For generating embeddings in semantic search
+
+# Optional dependencies (uncomment if used)
 # elasticsearch>=7.13.0
 # pinecone-client>=2.0.0
 
