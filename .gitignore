@@ -193,3 +193,7 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+
+# Vosk Models
+vosk-model-small-pt-0.3/
+vosk-model-pt-fb-v0.1.1-20220516_2113/

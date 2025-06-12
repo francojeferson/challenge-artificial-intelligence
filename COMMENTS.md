@@ -39,7 +39,8 @@ requirements.txt:
 - **Video and Audio Processing**:
   - **moviepy (>=1.0.3)**: For video manipulation and audio extraction.
   - **vosk (>=0.3.42)**: For audio transcription from videos using the 'vosk-model-small-pt-0.3' model for Brazilian
-    Portuguese content, ensuring local processing.
+    Portuguese content, ensuring local processing; attempted use of 'vosk-model-pt-fb-v0.1.1-20220516_2113' for higher
+    accuracy failed due to model loading error, reverted to 'vosk-model-small-pt-0.3'.
   - **pydub (>=0.25.1)**: For audio manipulation and format conversion.
   - **pyaudio (>=0.2.11)**: For audio input/output operations.
 - **Image Processing**:
@@ -84,6 +85,8 @@ privacy.
   video, audio) for a seamless learning experience.
 - **Performance Tuning**: Address potential performance bottlenecks with large datasets by exploring more efficient
   indexing solutions or caching strategies.
+- **Transcription Accuracy**: Explore alternative transcription models or configurations to improve accuracy for video
+  content, following the failure of 'vosk-model-pt-fb-v0.1.1-20220516_2113'.
 - **Additional Resource Types**: Plan for extensibility to support new formats like audio-only files or interactive web
   content by adding new ingestion adapters.
 
