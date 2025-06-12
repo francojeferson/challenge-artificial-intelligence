@@ -2,8 +2,8 @@
 
 ## What Works
 
-- Resource ingestion and indexing across all types: text, PDF, image, and video, with a total of 20 resources
-  successfully indexed in the latest Docker container run.
+- Resource ingestion and indexing across all types: text, PDF, image, and video, with a total of 15 resources
+  successfully indexed in the latest run.
 - Video transcription operational with the 'vosk-model-small-pt-0.3' model for Brazilian Portuguese content, confirmed
   by the latest run of 'run.py' in both local and Docker environments, loading the model from
   './vosk-model-small-pt-0.3'.
@@ -20,16 +20,15 @@
   assess knowledge gaps and deliver personalized content via 'prompt_engine.py' and an updated 'run.py'.
 - Localized user interaction to Brazilian Portuguese (PT-BR), with prompts, responses, and interface text in
   'prompt_engine.py' and 'run.py' updated for a consistent language experience.
+- Implemented a retry mechanism for temporary file deletion in 'video_ingestor.py', reducing the risk of disk space
+  issues by attempting deletion multiple times before logging a warning.
+- Confirmed installation of the spaCy model 'en_core_web_sm', ensuring readiness for enhanced text processing without
+  additional setup.
 
 ## What's Left to Build
 
-- Implementation of a robust solution for temporary file deletion warnings during video processing to prevent potential
-  disk space issues over time, possibly through delayed deletion, retry mechanisms, or alternative file management
-  strategies.
 - Assessment of transcription accuracy for the current model 'vosk-model-small-pt-0.3' based on user feedback, with
   potential exploration of other Vosk models or configurations if accuracy is deemed insufficient.
-- Resolution of the warning about the missing spaCy model 'en_core_web_sm' by updating the Dockerfile or requirements to
-  include it, if deemed necessary for enhanced text processing.
 - Development of the Content Generation Module (Milestone 4) to create dynamic, short-form content in multiple formats
   (text, video, audio) based on user preferences and indexed resources.
 - Implementation of the User Interface (Milestone 5) for a more intuitive, conversational experience beyond the current
@@ -50,25 +49,21 @@
   error "ConstArpaLm <LmStates> section reading failed", indicating an issue with the CARPA model file.
 - Docker setup has been updated to resolve build errors, with system dependencies, Vosk model, and NLTK data included,
   ensuring compatibility and functionality in isolated environments.
-- Minor warnings exist regarding temporary file access during video processing, which do not impact core functionality
-  but require further resolution.
-- A warning about the missing spaCy model 'en_core_web_sm' persists, which may affect advanced text processing but does
-  not prevent core operations.
+- Temporary file deletion warnings during video processing are now handled with a retry mechanism, reducing the impact
+  of file access conflicts, though warnings may still appear if deletion fails after multiple attempts.
+- The spaCy model 'en_core_web_sm' is confirmed to be installed, resolving any previous warnings and ensuring readiness
+  for advanced text processing.
 - Adaptive Prompt Engine Prototype (Milestone 3) is complete, with user interaction now localized to Brazilian
   Portuguese, supporting PT-BR prompts, responses, and interface text for a culturally relevant experience.
 
 ## Known Issues
 
 - Temporary file deletion warnings during video ingestion due to file access conflicts (e.g., "The process cannot access
-  the file because it is being used by another process"). These are non-critical but should be addressed to prevent
-  potential disk space issues.
-- NLTK processing errors due to missing data ('averaged_perceptron_tagger_eng') are now resolved in the Docker
-  environment by including the data during build, though this was an issue in earlier container runs.
+  the file because it is being used by another process") are mitigated with a retry mechanism. These are non-critical
+  but may still appear if deletion fails after multiple attempts.
 - Failure to load the alternative Vosk model 'vosk-model-pt-fb-v0.1.1-20220516_2113' due to an error with the CARPA
   model file ("ConstArpaLm <LmStates> section reading failed"), necessitating continued use of
   'vosk-model-small-pt-0.3'.
-- Warning about missing spaCy model 'en_core_web_sm', which does not prevent core functionality but may limit advanced
-  text processing capabilities.
 
 ## Evolution of Project Decisions
 
@@ -86,10 +81,12 @@
   (e.g., absence of 'ffmpeg').
 - Iteratively updated Docker configuration and dependency specifications ('requirements.txt') to resolve build errors,
   adding necessary system libraries ('portaudio19-dev') and adjusting version ranges for compatibility with Python 3.8.
-- Enhanced error logging in 'video_ingestor.py' to diagnose model loading and temporary file issues, with ongoing
-  efforts to address persistent file deletion warnings on Windows systems.
+- Enhanced error logging in 'video_ingestor.py' to diagnose model loading and temporary file issues, with a recent
+  update to implement a retry mechanism for file deletion to handle access conflicts on Windows systems.
 - Updated Dockerfile to include Vosk model and NLTK data, ensuring the containerized application runs with all required
   resources, confirmed by a successful container run that ingested and indexed all resources without critical errors.
 - Developed and integrated the Adaptive Prompt Engine Prototype (Milestone 3), focusing on interactive user dialogue and
   content delivery, with a subsequent update to localize all user interaction to Brazilian Portuguese based on user
   request.
+- Confirmed the presence of the spaCy model 'en_core_web_sm', ensuring the system is ready for advanced text processing
+  without additional setup.
