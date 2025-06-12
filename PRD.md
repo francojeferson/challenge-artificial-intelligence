@@ -133,7 +133,8 @@ flowchart TD
 
 - **Python 3.8+**
 - Text/PDF: PyPDF2, pdfminer.six, nltk, spaCy
-- Video: OpenAI Whisper (Python), Google Speech-to-Text API (Python client), Vosk (Python)
+- Video: OpenAI Whisper (Python), Google Speech-to-Text API (Python client), Vosk (Python, using
+  'vosk-model-small-pt-0.3' for Brazilian Portuguese content)
 - Image: Pillow, exifread
 - Search: Elasticsearch (Python client), Pinecone (Python client), FAISS, other Python-based vector DBs
 - Prompt Engine: LangChain, LlamaIndex, OpenAI API (Python integration)
@@ -145,8 +146,8 @@ flowchart TD
 ## 9. Milestones & Timeline
 
 1. **Project Setup & Documentation** (Complete)
-2. **Data Ingestion & Indexing Modules** (Text, PDF, Video, Image) - Significant Progress with updates to ingestion
-   modules for all resource types
+2. **Data Ingestion & Indexing Modules** (Text, PDF, Video, Image) - Completed, with video transcription fully
+   operational using 'vosk-model-small-pt-0.3' for Brazilian Portuguese content
 3. **Adaptive Prompt Engine Prototype**
 4. **Content Generation Module**
 5. **User Interface Implementation**

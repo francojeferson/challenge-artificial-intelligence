@@ -28,30 +28,29 @@ the system is containerized for isolation and reproducibility.
 The following third-party libraries and dependencies are used in the project, as reflected in the updated
 requirements.txt:
 
-- **Core Data Processing**:
-  - **numpy (>=1.21.0)**: For numerical operations and data handling.
-  - **pandas (>=1.3.0)**: For structured data manipulation and analysis.
-- **Text Processing**:
-  - **nltk (>=3.6.2)**: For natural language processing tasks like tokenization and summarization.
-  - **spacy (>=3.1.0)**: For advanced NLP tasks including entity recognition and keyword extraction.
-- **PDF Processing**:
+- **Core Dependencies**:
+  - **python-dotenv (>=0.19.0)**: For loading environment variables from a .env file.
+  - **setuptools (>=57.0.0)**: For package management and installation.
+- **Text and PDF Processing**:
   - **PyPDF2 (>=2.0.0)**: For reading PDF metadata and basic text extraction.
-  - **pdfminer.six (>=20201018)**: For accurate text extraction from PDFs.
-  - **pdf2image (>=1.16.0)**: For converting PDF pages to images for OCR.
-  - **pytesseract (>=0.3.8)**: For OCR on scanned PDFs to extract text from images.
-- **Video Processing**:
+  - **pdfminer.six (>=20200517)**: For accurate text extraction from PDFs.
+  - **nltk (>=3.6.2)**: For natural language processing tasks like tokenization and summarization.
+  - **spaCy (>=3.0.0)**: For advanced NLP tasks including entity recognition and keyword extraction.
+- **Video and Audio Processing**:
   - **moviepy (>=1.0.3)**: For video manipulation and audio extraction.
-  - **whisper (>=20230124)**: For audio transcription from videos using models like 'small' and 'base' for local
-    processing.
+  - **vosk (>=0.3.42)**: For audio transcription from videos using the 'vosk-model-small-pt-0.3' model for Brazilian
+    Portuguese content, ensuring local processing.
+  - **pydub (>=0.25.1)**: For audio manipulation and format conversion.
+  - **pyaudio (>=0.2.11)**: For audio input/output operations.
 - **Image Processing**:
-  - **Pillow (>=8.3.1)**: For image metadata extraction and manipulation.
+  - **Pillow (>=8.0.0)**: For image metadata extraction and manipulation.
   - **exifread (>=2.3.2)**: For detailed EXIF data extraction from images.
-- **Indexing and Search**:
-  - **faiss-cpu (>=1.7.2)**: For efficient similarity search and indexing of resources.
-  - **sentence-transformers (>=2.2.0)**: For generating semantic embeddings to support advanced search capabilities.
-- **General Utilities**:
-  - **json (>=2.0.9)**, **os (>=0.1.0)**, **tempfile (>=0.1.0)**, **typing (>=3.7.4.3)**, **datetime (>=4.3)**: Standard
-    Python libraries for file handling, temporary file management, type hints, and date/time operations.
+- **Indexing and Search (Optional, not currently in requirements.txt)**:
+  - **elasticsearch**: For efficient search and indexing of resources (commented out in requirements.txt).
+  - **pinecone-client**: For vector similarity search (commented out in requirements.txt).
+- **Prompt and Dialogue Engine (Optional, not currently in requirements.txt)**:
+  - **langchain**: For building conversational systems (commented out in requirements.txt).
+  - **llama-index**: For indexing and querying in dialogue systems (commented out in requirements.txt).
 
 All dependencies are open-source and compatible with the project's non-functional requirements for local processing and
 privacy.
@@ -65,7 +64,7 @@ privacy.
   OCR fallback for scanned PDFs, timestamped transcription segments for videos, and inferred tags from filenames and
   directories for images. These decisions enhance the richness of metadata and content available for indexing.
 - **Local Processing**: All data processing, including transcription and content generation, is performed locally to
-  adhere to privacy requirements. Libraries like Whisper are chosen for their ability to run offline.
+  adhere to privacy requirements. Libraries like Vosk are chosen for their ability to run offline.
 - **Python 3.8+**: Selected as the primary language for its robust ecosystem of libraries and support for modern
   programming paradigms, aligning with the PRD's technical constraints.
 - **Indexing Foundation**: The introduction of index_manager.py focuses on building a simple yet efficient index for

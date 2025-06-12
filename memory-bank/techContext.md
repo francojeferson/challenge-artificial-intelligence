@@ -8,7 +8,8 @@
 - **Text & PDF Processing**
   - PyPDF2, pdfminer.six, nltk, spaCy, textract
 - **Video Transcription**
-  - OpenAI Whisper (Python), Google Speech-to-Text API (Python client), Vosk (Python)
+  - OpenAI Whisper (Python), Google Speech-to-Text API (Python client), Vosk (Python, using 'vosk-model-small-pt-0.3'
+    for Brazilian Portuguese content)
 - **Image Metadata Extraction**
   - Pillow, exifread
 - **Search & Indexing**
@@ -23,6 +24,8 @@
 
 - Python 3.8+ (primary)
 - Containerization required for isolation and reproducibility (e.g., Docker)
+- Docker setup includes system dependencies: build-essential, gcc, g++, python3-dev, ffmpeg, libsndfile1,
+  portaudio19-dev
 - requirements.txt or poetry for dependency management
 
 ## Technical Constraints

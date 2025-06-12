@@ -30,6 +30,14 @@ except Exception as e:
     print(
         f"Warning: Could not download NLTK data. Some text processing features may be limited. Error: {e}"
     )
+# Check if NLTK data is available, otherwise set a flag to skip NLTK processing
+try:
+    nltk.data.find("tokenizers/punkt")
+    nltk.data.find("taggers/averaged_perceptron_tagger")
+    nltk_available = True
+except LookupError:
+    print(f"Warning: NLTK data not found. Text processing with NLTK will be skipped.")
+    nltk_available = False
 
 # Load spaCy model (ensure it is installed locally)
 try:
@@ -99,16 +107,21 @@ def process_text_content(content: str) -> Dict[str, Any]:
     processed_content = content
     metadata = {}
 
-    # Tokenization with NLTK
-    try:
-        tokens = nltk.word_tokenize(content)
-        pos_tags = nltk.pos_tag(tokens)
-        metadata["token_count"] = len(tokens)
-        metadata["pos_distribution"] = summarize_pos_tags(pos_tags)
-    except Exception as e:
-        print(f"Error processing text with NLTK: {e}")
+    # Tokenization with NLTK if available
+    if nltk_available:
+        try:
+            tokens = nltk.word_tokenize(content)
+            pos_tags = nltk.pos_tag(tokens)
+            metadata["token_count"] = len(tokens)
+            metadata["pos_distribution"] = summarize_pos_tags(pos_tags)
+        except Exception as e:
+            print(f"Error processing text with NLTK: {e}")
+            metadata["token_count"] = 0
+            metadata["pos_distribution"] = {}
+    else:
         metadata["token_count"] = 0
         metadata["pos_distribution"] = {}
+        print("Skipping NLTK processing due to missing data.")
 
     # Entity recognition and keyword extraction with spaCy if available
     if nlp:
@@ -137,16 +150,20 @@ def process_text_content(content: str) -> Dict[str, Any]:
         metadata["keywords"] = []
 
     # Summarize content for longer texts
-    try:
-        if len(content) > 500:  # Summarize if content is longer than 500 characters
-            sentences = nltk.sent_tokenize(content)
-            summary = " ".join(sentences[:3])  # Take first 3 sentences as summary
-            metadata["summary"] = summary
-        else:
-            metadata["summary"] = content
-    except Exception as e:
-        print(f"Error summarizing content: {e}")
+    if nltk_available:
+        try:
+            if len(content) > 500:  # Summarize if content is longer than 500 characters
+                sentences = nltk.sent_tokenize(content)
+                summary = " ".join(sentences[:3])  # Take first 3 sentences as summary
+                metadata["summary"] = summary
+            else:
+                metadata["summary"] = content
+        except Exception as e:
+            print(f"Error summarizing content: {e}")
+            metadata["summary"] = content[:200] if len(content) > 200 else content
+    else:
         metadata["summary"] = content[:200] if len(content) > 200 else content
+        print("Skipping content summarization due to missing NLTK data.")
 
     return {"processed_content": processed_content, "metadata": metadata}
 

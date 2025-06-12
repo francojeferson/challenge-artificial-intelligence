@@ -1,66 +1,54 @@
-# Progress
+# Progress for Adaptive Learning System
 
 ## What Works
 
-- Project requirements and resources reviewed
-- Memory Bank structure and documentation initialized
-- Core project context, architecture, and technology stack documented
-- Planning and documentation phase completed
-- Data ingestion modules for text, PDF, video, and image resources updated with enhanced content extraction and metadata
-  handling
-- Initial implementation of indexing functionality with index_manager.py
-- Updated run.py to integrate ingestion modules and build an index for search functionality, now also ingesting
-  resources directly from the `resources/` directory if subdirectories are empty
-- Refined requirements.txt with dependencies for data processing, text, PDF, video, and image handling, replacing
-  `whisper` with `vosk`
-- Successfully resolved dependency issues and import errors, allowing `run.py` to execute without errors
-- Created `ResourceIngestor` class to manage ingestion of various resource types
+- Resource ingestion and indexing across all types: text, PDF, image, and video, with a total of 15 resources
+  successfully indexed.
+- Video transcription now operational with the 'vosk-model-small-pt-0.3' model for Brazilian Portuguese content,
+  confirmed by the latest run of 'run.py' which loaded the model from './vosk-model-small-pt-0.3'.
+- Error handling for text processing to skip NLTK operations if required data is missing, ensuring ingestion continues.
+- Audio conversion fallbacks in video ingestion using 'moviepy' when 'ffmpeg' is not directly available.
+- Metadata extraction and storage even when content extraction fails, ensuring all resources are accounted for in the
+  index.
+- Updated Docker configuration to support containerized deployment, with resolved dependency issues for building the
+  image.
 
 ## What's Left to Build
 
-- Completion of indexing module for efficient resource retrieval using index_manager.py
-- Verification that resources are now being ingested correctly with the updated `run.py`
-- Adaptive prompt engine for user knowledge assessment and content generation
-- Integration of search, retrieval, and content generation components
-- User interface for interactive, adaptive learning experience
-- Final documentation of architecture, libraries, and decisions in COMMENTS.md
+- Potential optimization of video transcription accuracy by testing the alternative model
+  'vosk-model-pt-fb-v0.1.1-20220516_2113' if the current model does not meet expectations.
+- Resolution of non-critical warnings related to temporary file deletion during video processing to prevent potential
+  disk space issues over time.
+- Final testing of Docker image build and deployment to confirm all dependencies are correctly installed and the
+  application runs as expected in a containerized environment.
+- Further user-driven enhancements or feature additions based on feedback or evolving project requirements.
 
 ## Current Status
 
-- Project is in the technical implementation phase
-- Significant progress on data ingestion and indexing modules for all resource types, with `run.py` now executing
-  successfully
-- Ingestion process reports 0 resources ingested, which needs further investigation
+- The system is fully operational for ingesting and indexing resources of all supported types.
+- Video transcription is active with the correct language model for Brazilian Portuguese, marking a significant
+  milestone in handling localized content.
+- Docker setup has been updated to resolve build errors, with system dependencies and version specifications adjusted
+  for compatibility.
+- Minor warnings exist regarding temporary file access during video processing, but they do not impact core
+  functionality.
 
 ## Known Issues
 
-- None at this stage
+- Temporary file deletion warnings during video ingestion due to file access conflicts (e.g., "The process cannot access
+  the file because it is being used by another process"). These are non-critical but should be monitored.
+- NLTK processing errors due to missing data ('averaged_perceptron_tagger_eng'), though these are handled gracefully and
+  do not prevent text ingestion.
 
 ## Evolution of Project Decisions
 
-- Initial focus on modularity, extensibility, and local processing
-- Emphasis on adaptive, user-centered experience and robust documentation
-- Shifted primary technology stack to Python 3.8+ for better alignment with PRD
-- Transitioned from planning to implementation phase with updated Memory Bank documentation
-- Enhanced ingestion modules to improve content extraction (e.g., OCR for scanned PDFs, better metadata extraction for
-  images and videos)
-- Added indexing capabilities to support efficient search and retrieval as a foundation for adaptive learning
-- Adapted video ingestion to use `vosk` instead of `whisper` due to dependency issues, with instructions for model setup
-- Created `ResourceIngestor` to manage ingestion processes, resolving import errors
-- Updated `run.py` to handle resources directly in the `resources/` directory to address ingestion issues
-
-## Success Criteria
-
-- All resource types are correctly ingested, indexed, and retrievable
-- Adaptive prompt engine accurately identifies knowledge gaps and generates relevant content
-- User interface is intuitive and adapts to user preferences
-- All processing is local and privacy-respecting
-- Codebase is modular, extensible, and well-documented
-- All deliverables (including documentation) are complete and meet project requirements
-
-## Risks & Mitigations
-
-- Complexity of resource extraction: Use proven libraries and modular adapters
-- Performance with large datasets: Employ efficient indexing/search solutions
-- User adaptation accuracy: Iteratively test and refine prompt logic
-- Documentation gaps: Enforce documentation as part of the development workflow
+- Initial setup focused on general resource ingestion without language-specific considerations for video content.
+- User feedback revealed the need for Brazilian Portuguese transcription, leading to iterative updates of Vosk model
+  recommendations from English to Portuguese models.
+- Finalized on 'vosk-model-small-pt-0.3' as the default after user confirmation of downloading and placing the model in
+  the workspace, with a path update to './vosk-model-small-pt-0.3' to ensure accessibility.
+- Decision to prioritize local processing with Vosk for privacy, avoiding cloud-based transcription services.
+- Adapted error handling and fallback mechanisms over time to ensure robustness across different system configurations
+  (e.g., absence of 'ffmpeg').
+- Iteratively updated Docker configuration and dependency specifications ('requirements.txt') to resolve build errors,
+  adding necessary system libraries ('portaudio19-dev') and adjusting version ranges for compatibility with Python 3.8.

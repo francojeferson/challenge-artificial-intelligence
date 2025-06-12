@@ -90,7 +90,8 @@ def ingest_pdf_file(file_path: str) -> Dict[str, Any]:
 
     if not content:
         print(f"Warning: No content extracted from {file_path}")
-        return {}
+        metadata["error"] = "No content extracted from PDF"
+        return {"metadata": metadata, "content": "", "processed_content": ""}
 
     return {"metadata": metadata, "content": content, "processed_content": content}
 

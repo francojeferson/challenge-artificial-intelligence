@@ -65,7 +65,8 @@ def ingest_video_file(file_path: str) -> Dict[str, Any]:
         print(f"Error extracting audio from video {file_path}: {e}")
         if audio_path and os.path.exists(audio_path):
             os.remove(audio_path)
-        return {}
+        metadata["error"] = "Failed to extract audio from video"
+        return {"metadata": metadata, "content": "", "processed_content": ""}
 
     # Transcribe audio using Vosk
     content = ""
@@ -78,17 +79,33 @@ def ingest_video_file(file_path: str) -> Dict[str, Any]:
             or wf.getframerate() not in [16000, 44100]
         ):
             print(f"Audio format not supported for {file_path}. Converting...")
-            # Conversion logic could be added here if needed
-            raise ValueError("Audio must be mono, 16-bit, and 16000 or 44100 Hz")
+            wf.close()
+            converted_audio_path = convert_audio_format(audio_path)
+            if converted_audio_path:
+                if audio_path and os.path.exists(audio_path):
+                    try:
+                        os.remove(audio_path)
+                    except Exception as e:
+                        print(
+                            f"Warning: Could not delete temporary file {audio_path}: {e}"
+                        )
+                audio_path = converted_audio_path
+                wf = wave.open(audio_path, "rb")
+            else:
+                raise ValueError(
+                    "Audio conversion failed, format not supported for Vosk"
+                )
 
-        # Initialize Vosk model (assuming a model is available in the specified path)
-        model_path = "model"  # Replace with actual path to Vosk model
+        # Initialize Vosk model (check for model in a default or user-specified path)
+        model_path = os.environ.get(
+            "VOSK_MODEL_PATH", "./vosk-model-small-pt-0.3"
+        )  # Default to a lightweight Portuguese model in the workspace root
         if not os.path.exists(model_path):
             print(
-                f"Error: Vosk model not found at {model_path}. Please download a Vosk model from https://alphacephei.com/vosk/models and update the model_path in video_ingestor.py."
+                f"Error: Vosk model not found at {model_path}. For this Adaptive Learning System with Brazilian Portuguese content, I recommend 'vosk-model-pt-fb-v0.1.1-20220516_2113' for higher accuracy or 'vosk-model-small-pt-0.3' for lower resource usage. Ensure the model folder is in the workspace root or set the correct path in video_ingestor.py or as an environment variable 'VOSK_MODEL_PATH'. Download from https://alphacephei.com/vosk/models if needed."
             )
             raise FileNotFoundError(
-                f"Vosk model not found at {model_path}. Please update model_path in video_ingestor.py with the correct path to a Vosk model."
+                f"Vosk model not found at {model_path}. Please update model_path in video_ingestor.py or set the environment variable 'VOSK_MODEL_PATH' with the correct path to a Vosk model."
             )
 
         model = vosk.Model(model_path)
@@ -123,13 +140,91 @@ def ingest_video_file(file_path: str) -> Dict[str, Any]:
         print(f"Error transcribing audio from {file_path}: {e}")
     finally:
         if audio_path and os.path.exists(audio_path):
-            os.remove(audio_path)
+            try:
+                os.remove(audio_path)
+            except Exception as e:
+                print(f"Warning: Could not delete temporary file {audio_path}: {e}")
 
     if not content:
         print(f"Warning: No transcription extracted from {file_path}")
-        return {}
+        metadata["error"] = "No transcription extracted from video"
+        return {"metadata": metadata, "content": "", "processed_content": ""}
 
     return {"metadata": metadata, "content": content, "processed_content": content}
+
+
+def convert_audio_format(input_path: str) -> str:
+    """
+    Convert audio file to mono, 16-bit, 16000 Hz WAV format for Vosk compatibility.
+    Attempts to use ffmpeg directly, falls back to moviepy if ffmpeg is not available.
+
+    Args:
+        input_path (str): Path to the input audio file.
+
+    Returns:
+        str: Path to the converted audio file, or empty string if conversion fails.
+    """
+    import subprocess
+    import tempfile
+    from moviepy.editor import AudioFileClip
+
+    # First attempt with ffmpeg if available
+    try:
+        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_file:
+            output_path = temp_file.name
+
+        command = [
+            "ffmpeg",
+            "-i",
+            input_path,
+            "-ac",
+            "1",  # Mono
+            "-ar",
+            "16000",  # Sample rate 16000 Hz
+            "-acodec",
+            "pcm_s16le",  # 16-bit PCM
+            "-y",  # Overwrite output if exists
+            output_path,
+        ]
+        subprocess.run(
+            command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True
+        )
+        if os.path.exists(output_path):
+            return output_path
+        else:
+            print("Error: Converted audio file not created with ffmpeg.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error converting audio format with ffmpeg: {e.stderr.decode()}")
+    except FileNotFoundError:
+        print(
+            "Error: ffmpeg not found on system. Falling back to moviepy for conversion."
+        )
+    except Exception as e:
+        print(f"Error converting audio format with ffmpeg: {e}")
+
+    # Fallback to moviepy if ffmpeg direct call fails
+    try:
+        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_file:
+            output_path = temp_file.name
+
+        audio = AudioFileClip(input_path)
+        audio.write_audiofile(
+            output_path,
+            codec="pcm_s16le",
+            fps=16000,
+            nbytes=2,  # 16-bit
+            verbose=False,
+            logger=None,
+        )
+        audio.close()
+        if os.path.exists(output_path):
+            return output_path
+        else:
+            print("Error: Converted audio file not created with moviepy.")
+            return ""
+    except Exception as e:
+        print(f"Error converting audio format with moviepy: {e}")
+        return ""
 
 
 def ingest_video_directory(directory_path: str) -> List[Dict[str, Any]]:
