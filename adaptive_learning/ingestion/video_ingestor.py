@@ -64,7 +64,12 @@ def ingest_video_file(file_path: str) -> Dict[str, Any]:
     except Exception as e:
         print(f"Error extracting audio from video {file_path}: {e}")
         if audio_path and os.path.exists(audio_path):
-            os.remove(audio_path)
+            try:
+                os.remove(audio_path)
+            except Exception as delete_error:
+                print(
+                    f"Warning: Could not delete temporary file {audio_path}: {delete_error}"
+                )
         metadata["error"] = "Failed to extract audio from video"
         return {"metadata": metadata, "content": "", "processed_content": ""}
 
@@ -85,13 +90,14 @@ def ingest_video_file(file_path: str) -> Dict[str, Any]:
                 if audio_path and os.path.exists(audio_path):
                     try:
                         os.remove(audio_path)
-                    except Exception as e:
+                    except Exception as delete_error:
                         print(
-                            f"Warning: Could not delete temporary file {audio_path}: {e}"
+                            f"Warning: Could not delete temporary file {audio_path}: {delete_error}"
                         )
                 audio_path = converted_audio_path
                 wf = wave.open(audio_path, "rb")
             else:
+                wf.close()
                 raise ValueError(
                     "Audio conversion failed, format not supported for Vosk"
                 )
@@ -108,7 +114,26 @@ def ingest_video_file(file_path: str) -> Dict[str, Any]:
                 f"Vosk model not found at {model_path}. Please update model_path in video_ingestor.py or set the environment variable 'VOSK_MODEL_PATH' with the correct path to a Vosk model."
             )
 
-        model = vosk.Model(model_path)
+        # Test loading the alternative model for higher accuracy
+        try:
+            alt_model_path = "./vosk-model-pt-fb-v0.1.1-20220516_2113"
+            if os.path.exists(alt_model_path):
+                print(
+                    f"Attempting to load alternative model from {alt_model_path} for testing..."
+                )
+                alt_model = vosk.Model(alt_model_path)
+                print(f"Successfully loaded alternative model from {alt_model_path}.")
+                model = alt_model
+            else:
+                print(
+                    f"Alternative model path {alt_model_path} not found, using default model."
+                )
+                model = vosk.Model(model_path)
+        except Exception as alt_error:
+            print(f"Error loading alternative model from {alt_model_path}: {alt_error}")
+            print(f"Falling back to default model at {model_path}.")
+            model = vosk.Model(model_path)
+
         rec = vosk.KaldiRecognizer(model, wf.getframerate())
         rec.SetWords(True)
 
@@ -142,8 +167,10 @@ def ingest_video_file(file_path: str) -> Dict[str, Any]:
         if audio_path and os.path.exists(audio_path):
             try:
                 os.remove(audio_path)
-            except Exception as e:
-                print(f"Warning: Could not delete temporary file {audio_path}: {e}")
+            except Exception as delete_error:
+                print(
+                    f"Warning: Could not delete temporary file {audio_path}: {delete_error}"
+                )
 
     if not content:
         print(f"Warning: No transcription extracted from {file_path}")

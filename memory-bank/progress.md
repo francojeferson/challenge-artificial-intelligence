@@ -2,45 +2,59 @@
 
 ## What Works
 
-- Resource ingestion and indexing across all types: text, PDF, image, and video, with a total of 15 resources
-  successfully indexed.
-- Video transcription now operational with the 'vosk-model-small-pt-0.3' model for Brazilian Portuguese content,
-  confirmed by the latest run of 'run.py' which loaded the model from './vosk-model-small-pt-0.3'.
+- Resource ingestion and indexing across all types: text, PDF, image, and video, with a total of 20 resources
+  successfully indexed in the latest Docker container run.
+- Video transcription operational with the 'vosk-model-small-pt-0.3' model for Brazilian Portuguese content, confirmed
+  by the latest run of 'run.py' in both local and Docker environments, loading the model from
+  './vosk-model-small-pt-0.3'.
 - Error handling for text processing to skip NLTK operations if required data is missing, ensuring ingestion continues.
 - Audio conversion fallbacks in video ingestion using 'moviepy' when 'ffmpeg' is not directly available.
 - Metadata extraction and storage even when content extraction fails, ensuring all resources are accounted for in the
   index.
 - Updated Docker configuration to support containerized deployment, with resolved dependency issues for building the
-  image.
+  image, including copying the Vosk model and downloading NLTK data ('punkt_tab' and 'averaged_perceptron_tagger_eng')
+  during the build process.
+- Successful Docker image build and container run, confirming the application runs as expected in a containerized
+  environment with all necessary resources available.
 
 ## What's Left to Build
 
-- Investigation into the failure of the alternative model 'vosk-model-pt-fb-v0.1.1-20220516_2113' and potential testing
-  of other models or configurations if transcription accuracy with the current model does not meet expectations.
-- Resolution of non-critical warnings related to temporary file deletion during video processing to prevent potential
-  disk space issues over time.
-- Final testing of Docker image build and deployment to confirm all dependencies are correctly installed and the
-  application runs as expected in a containerized environment.
+- Implementation of a robust solution for temporary file deletion warnings during video processing to prevent potential
+  disk space issues over time, possibly through delayed deletion, retry mechanisms, or alternative file management
+  strategies.
+- Assessment of transcription accuracy for the current model 'vosk-model-small-pt-0.3' based on user feedback, with
+  potential exploration of other Vosk models or configurations if accuracy is deemed insufficient.
+- Resolution of the warning about the missing spaCy model 'en_core_web_sm' by updating the Dockerfile or requirements to
+  include it, if deemed necessary for enhanced text processing.
 - Further user-driven enhancements or feature additions based on feedback or evolving project requirements.
 
 ## Current Status
 
-- The system is fully operational for ingesting and indexing resources of all supported types.
+- The system is fully operational for ingesting and indexing resources of all supported types, both locally and in a
+  Docker container.
 - Video transcription is active with the lightweight model 'vosk-model-small-pt-0.3' for Brazilian Portuguese, after an
   unsuccessful attempt to use 'vosk-model-pt-fb-v0.1.1-20220516_2113' which failed due to a model loading error.
-- Docker setup has been updated to resolve build errors, with system dependencies and version specifications adjusted
-  for compatibility.
-- Minor warnings exist regarding temporary file access during video processing, but they do not impact core
-  functionality.
+- Investigation confirmed that the alternative model 'vosk-model-pt-fb-v0.1.1-20220516_2113' fails to load with the
+  error "ConstArpaLm <LmStates> section reading failed", indicating an issue with the CARPA model file.
+- Docker setup has been updated to resolve build errors, with system dependencies, Vosk model, and NLTK data included,
+  ensuring compatibility and functionality in isolated environments.
+- Minor warnings exist regarding temporary file access during video processing, which do not impact core functionality
+  but require further resolution.
+- A warning about the missing spaCy model 'en_core_web_sm' persists, which may affect advanced text processing but does
+  not prevent core operations.
 
 ## Known Issues
 
 - Temporary file deletion warnings during video ingestion due to file access conflicts (e.g., "The process cannot access
-  the file because it is being used by another process"). These are non-critical but should be monitored.
-- NLTK processing errors due to missing data ('averaged_perceptron_tagger_eng'), though these are handled gracefully and
-  do not prevent text ingestion.
+  the file because it is being used by another process"). These are non-critical but should be addressed to prevent
+  potential disk space issues.
+- NLTK processing errors due to missing data ('averaged_perceptron_tagger_eng') are now resolved in the Docker
+  environment by including the data during build, though this was an issue in earlier container runs.
 - Failure to load the alternative Vosk model 'vosk-model-pt-fb-v0.1.1-20220516_2113' due to an error with the CARPA
-  model file, necessitating a revert to 'vosk-model-small-pt-0.3'.
+  model file ("ConstArpaLm <LmStates> section reading failed"), necessitating continued use of
+  'vosk-model-small-pt-0.3'.
+- Warning about missing spaCy model 'en_core_web_sm', which does not prevent core functionality but may limit advanced
+  text processing capabilities.
 
 ## Evolution of Project Decisions
 
@@ -51,8 +65,14 @@
   'vosk-model-small-pt-0.3' after the alternative model failed to load due to internal file structure issues.
 - Finalized on 'vosk-model-small-pt-0.3' as the default after user confirmation of its presence in the workspace, with a
   path update to './vosk-model-small-pt-0.3' to ensure accessibility.
+- Recent investigation confirmed the specific error with the alternative model as a CARPA file reading issue, deciding
+  to stick with the current model unless transcription accuracy feedback necessitates further exploration.
 - Decision to prioritize local processing with Vosk for privacy, avoiding cloud-based transcription services.
 - Adapted error handling and fallback mechanisms over time to ensure robustness across different system configurations
   (e.g., absence of 'ffmpeg').
 - Iteratively updated Docker configuration and dependency specifications ('requirements.txt') to resolve build errors,
   adding necessary system libraries ('portaudio19-dev') and adjusting version ranges for compatibility with Python 3.8.
+- Enhanced error logging in 'video_ingestor.py' to diagnose model loading and temporary file issues, with ongoing
+  efforts to address persistent file deletion warnings on Windows systems.
+- Updated Dockerfile to include Vosk model and NLTK data, ensuring the containerized application runs with all required
+  resources, confirmed by a successful container run that ingested and indexed all resources without critical errors.

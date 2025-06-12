@@ -30,6 +30,15 @@ COPY adaptive_learning ./adaptive_learning
 COPY run.py ./run.py
 COPY resources ./resources
 COPY index_data ./index_data
+COPY vosk-model-small-pt-0.3 ./vosk-model-small-pt-0.3
+
+# Download NLTK data to a specific directory with permissions
+RUN mkdir -p /home/appuser/nltk_data && \
+    python -m nltk.downloader -d /home/appuser/nltk_data punkt_tab averaged_perceptron_tagger_eng && \
+    chown -R appuser:appuser /home/appuser/nltk_data
+
+# Ensure Vosk model permissions
+RUN chown -R appuser:appuser /home/appuser/vosk-model-small-pt-0.3
 
 # Set permissions
 RUN chown -R appuser:appuser /home/appuser

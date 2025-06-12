@@ -2,49 +2,63 @@
 
 ## Current Work Focus
 
-- Successfully integrated the Vosk model 'vosk-model-small-pt-0.3' for Brazilian Portuguese video transcription after an
-  unsuccessful attempt with an alternative model.
-- Updated 'video_ingestor.py' to use the model located at './vosk-model-small-pt-0.3' by default, with an environment
-  variable override option 'VOSK_MODEL_PATH'.
-- Ran 'run.py' to confirm that the model is loaded and used for video ingestion, resulting in successful processing of
-  all resource types.
+- Successfully built and tested a Docker image for the Adaptive Learning System, ensuring all necessary resources (Vosk
+  model and NLTK data) are included and operational within the containerized environment.
+- Completed investigation into the alternative Vosk model 'vosk-model-pt-fb-v0.1.1-20220516_2113', confirming it fails
+  to load due to a CARPA model file error ("ConstArpaLm <LmStates> section reading failed").
+- Updated error handling in 'video_ingestor.py' to address temporary file deletion warnings, though the issue persists
+  and requires further resolution.
+- Ran 'run.py' within a Docker container to confirm successful ingestion and indexing of all resource types, including
+  video transcription with the default model 'vosk-model-small-pt-0.3'.
 
 ## Recent Changes
 
-- Modified ingestion scripts to handle errors gracefully and ensure metadata is returned even if content extraction
-  fails.
-- Enhanced error handling for text processing to skip NLTK operations if required data is missing.
-- Implemented audio conversion fallbacks in video ingestion using 'moviepy' when 'ffmpeg' is unavailable.
-- Updated Vosk model recommendations and paths in 'video_ingestor.py' to support Brazilian Portuguese content, initially
-  attempting to use 'vosk-model-pt-fb-v0.1.1-20220516_2113' for higher accuracy, but reverted to
-  'vosk-model-small-pt-0.3' due to model loading errors with the alternative.
+- Updated Dockerfile to include copying the Vosk model 'vosk-model-small-pt-0.3' and downloading NLTK data ('punkt_tab'
+  and 'averaged_perceptron_tagger_eng') to a user-accessible directory with proper permissions.
+- Built and deployed a Docker image tagged 'adaptive-learning-system', which successfully ran the application without
+  previous errors related to missing resources.
+- Enhanced 'video_ingestor.py' to attempt loading the alternative Vosk model and log specific errors before falling back
+  to the default model.
+- Improved error handling for temporary file deletion in 'video_ingestor.py' to provide detailed warning messages when
+  deletion fails due to access conflicts.
 
 ## Next Steps
 
-- Monitor the system for any remaining issues with temporary file deletion warnings during video processing.
-- Investigate potential causes for the failure of the alternative model 'vosk-model-pt-fb-v0.1.1-20220516_2113' and
-  explore other models or configurations if transcription accuracy needs improvement.
-- Test Docker image build and deployment to ensure all dependencies are correctly installed and the application runs as
-  expected in a containerized environment.
+- Explore advanced strategies for temporary file handling to fully resolve persistent deletion warnings, potentially
+  using delayed deletion, retry mechanisms, or alternative file management libraries.
+- Gather user feedback on transcription accuracy of the current model 'vosk-model-small-pt-0.3'. If accuracy is
+  insufficient, consider sourcing a different Vosk model or version for Brazilian Portuguese content from the official
+  repository.
+- Address the warning about the missing spaCy model 'en_core_web_sm' by updating the Dockerfile or requirements to
+  include it, if deemed necessary for enhanced text processing.
 - Update other memory bank files as needed to reflect any new technical decisions or patterns identified.
 
 ## Active Decisions and Considerations
 
-- Decided to revert to 'vosk-model-small-pt-0.3' as the default due to its successful operation, after the alternative
-  model 'vosk-model-pt-fb-v0.1.1-20220516_2113' failed to load with an error related to the CARPA model file.
-- Considered the impact of temporary file access issues but deemed them non-critical to core functionality.
+- Decided to stick with the Vosk model 'vosk-model-small-pt-0.3' as the default for video transcription due to the
+  failure of the alternative model 'vosk-model-pt-fb-v0.1.1-20220516_2113'. Further model exploration will depend on
+  user feedback regarding transcription accuracy.
+- Considered the persistent temporary file access issues as a non-critical but important area for improvement to prevent
+  potential disk space problems over time.
+- Confirmed Docker deployment as a viable method for running the application with all dependencies isolated, noting the
+  successful resolution of NLTK and Vosk model issues in the container.
 
 ## Important Patterns and Preferences
 
 - Preference for local processing to ensure privacy, as seen in the use of Vosk for offline transcription.
 - Pattern of iterative updates to handle user feedback on language-specific requirements, ensuring the system adapts to
   specific content needs.
+- Emphasis on detailed error logging and fallback mechanisms to maintain system robustness during resource ingestion.
+- Focus on containerization for reproducibility and dependency management, ensuring consistent application behavior
+  across environments.
 
 ## Learnings and Project Insights
 
-- Learned that Vosk model paths must be explicitly set and validated, as model availability and compatibility are
-  critical for video transcription.
-- Insight that not all Vosk models may load correctly due to internal file structure issues, necessitating fallback
-  options and thorough testing before deployment.
-- Understood that user feedback on language requirements can significantly impact tool selection and configuration,
-  requiring flexibility in model recommendations.
+- Learned that specific Vosk model errors, such as issues with CARPA file reading, may require model file updates or
+  replacements from the source, which might not be feasible within the current project scope.
+- Insight that temporary file deletion issues on Windows systems may require advanced handling strategies, such as retry
+  mechanisms or alternative file management libraries, to prevent access conflicts.
+- Understood that user feedback on transcription accuracy is critical for deciding whether to invest effort in sourcing
+  or configuring alternative models.
+- Recognized the importance of explicitly including all necessary resources (models, data) in Docker images to ensure
+  functionality in isolated environments, along with proper permission settings for non-root users.
