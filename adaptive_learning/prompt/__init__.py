@@ -1,1 +1,1 @@
-# Prompt module: Adaptive prompt engine for user knowledge assessment and dialogue
+# This file makes the prompt directory a package.

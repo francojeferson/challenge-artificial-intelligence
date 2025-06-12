@@ -117,8 +117,14 @@ def main():
 
     # Initialize PromptEngine for user interaction
     from adaptive_learning.prompt.prompt_engine import PromptEngine
+    from adaptive_learning.content_generation.content_generator import (
+        ContentGenerationFactory,
+    )
 
     engine = PromptEngine()
+    # Use ContentGenerationFactory to get a TextGenerator instance as default
+    content_generator = ContentGenerationFactory.get_generator("text")
+    engine.content_generator = content_generator
     engine.set_indexed_data(indexer)
 
     print("\nIniciando sessão interativa de aprendizado...")
@@ -137,12 +143,13 @@ def main():
         print(f"\nPergunta: {response['prompt']}")
         if response["content"] and isinstance(response["content"], dict):
             print(f"Conteúdo: {response['content'].get('title', 'Sem título')}")
-            print(f"Tipo: {response['content'].get('type', 'texto')}")
-            content_snippet = response["content"].get(
+            print(f"Formato: {response['content'].get('format', 'texto')}")
+            print(f"Fonte: {response['content'].get('source', 'Fonte desconhecida')}")
+            content_text = response["content"].get(
                 "content", "Conteúdo não disponível."
-            )[:200]
-            if content_snippet:
-                print(f"Trecho do Conteúdo: {content_snippet}...")
+            )
+            if content_text:
+                print(f"Conteúdo Gerado: {content_text}")
             if "note" in response["content"]:
                 print(f"Nota: {response['content']['note']}")
         else:

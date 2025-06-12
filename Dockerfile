@@ -44,5 +44,25 @@ RUN chown -R appuser:appuser /home/appuser/vosk-model-small-pt-0.3
 RUN chown -R appuser:appuser /home/appuser
 USER appuser
 
-# Command to run the application
-CMD ["python3", "run.py"]
+# Install Node.js and npm for building React frontend
+USER root
+RUN apt-get update && apt-get install -y curl && \
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install pyttsx3 dependencies and pyttsx3 itself
+RUN apt-get update && apt-get install -y espeak libespeak1 libespeak-dev && \
+    pip install pyttsx3
+
+# Build React frontend
+COPY adaptive_learning/ui/frontend ./adaptive_learning/ui/frontend
+WORKDIR /home/appuser/adaptive_learning/ui/frontend
+RUN npm install && npm run build
+
+# Change back to app root
+WORKDIR /home/appuser
+USER appuser
+
+# Command to run the FastAPI web app serving the React frontend
+CMD ["uvicorn", "adaptive_learning.ui.web_app:app", "--host", "0.0.0.0", "--port", "8000"]
