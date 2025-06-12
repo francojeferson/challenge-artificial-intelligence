@@ -115,6 +115,39 @@ def main():
 
     print("\nResource ingestion and indexing completed successfully.")
 
+    # Initialize PromptEngine for user interaction
+    from adaptive_learning.prompt.prompt_engine import PromptEngine
+
+    engine = PromptEngine()
+    engine.set_indexed_data(indexer)
+
+    print("\nIniciando sessão interativa de aprendizado...")
+    print("Você pode digitar 'sair' a qualquer momento para encerrar a sessão.")
+
+    while True:
+        user_input = input(
+            "\nSobre o que você gostaria de aprender ou precisa de ajuda? "
+        )
+        if user_input.lower() in ["sair", "exit", "quit"]:
+            print("Encerrando sessão interativa. Até logo!")
+            break
+
+        # Process user input through the prompt engine
+        response = engine.process_user_interaction(user_input)
+        print(f"\nPergunta: {response['prompt']}")
+        if response["content"] and isinstance(response["content"], dict):
+            print(f"Conteúdo: {response['content'].get('title', 'Sem título')}")
+            print(f"Tipo: {response['content'].get('type', 'texto')}")
+            content_snippet = response["content"].get(
+                "content", "Conteúdo não disponível."
+            )[:200]
+            if content_snippet:
+                print(f"Trecho do Conteúdo: {content_snippet}...")
+            if "note" in response["content"]:
+                print(f"Nota: {response['content']['note']}")
+        else:
+            print(f"Resposta: {response['content']}")
+
 
 if __name__ == "__main__":
     main()

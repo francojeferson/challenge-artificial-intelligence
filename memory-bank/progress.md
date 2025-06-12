@@ -16,6 +16,10 @@
   during the build process.
 - Successful Docker image build and container run, confirming the application runs as expected in a containerized
   environment with all necessary resources available.
+- Adaptive Prompt Engine Prototype (Milestone 3) implemented and integrated, enabling interactive user dialogue to
+  assess knowledge gaps and deliver personalized content via 'prompt_engine.py' and an updated 'run.py'.
+- Localized user interaction to Brazilian Portuguese (PT-BR), with prompts, responses, and interface text in
+  'prompt_engine.py' and 'run.py' updated for a consistent language experience.
 
 ## What's Left to Build
 
@@ -26,6 +30,14 @@
   potential exploration of other Vosk models or configurations if accuracy is deemed insufficient.
 - Resolution of the warning about the missing spaCy model 'en_core_web_sm' by updating the Dockerfile or requirements to
   include it, if deemed necessary for enhanced text processing.
+- Development of the Content Generation Module (Milestone 4) to create dynamic, short-form content in multiple formats
+  (text, video, audio) based on user preferences and indexed resources.
+- Implementation of the User Interface (Milestone 5) for a more intuitive, conversational experience beyond the current
+  command-line interaction.
+- Integration and comprehensive testing of all system components (Milestone 6) to ensure seamless operation and
+  alignment with PRD success criteria.
+- Finalization of documentation (Milestone 7) and repository management for delivery (Milestone 8) as per project
+  requirements.
 - Further user-driven enhancements or feature additions based on feedback or evolving project requirements.
 
 ## Current Status
@@ -42,6 +54,8 @@
   but require further resolution.
 - A warning about the missing spaCy model 'en_core_web_sm' persists, which may affect advanced text processing but does
   not prevent core operations.
+- Adaptive Prompt Engine Prototype (Milestone 3) is complete, with user interaction now localized to Brazilian
+  Portuguese, supporting PT-BR prompts, responses, and interface text for a culturally relevant experience.
 
 ## Known Issues
 
@@ -76,3 +90,6 @@
   efforts to address persistent file deletion warnings on Windows systems.
 - Updated Dockerfile to include Vosk model and NLTK data, ensuring the containerized application runs with all required
   resources, confirmed by a successful container run that ingested and indexed all resources without critical errors.
+- Developed and integrated the Adaptive Prompt Engine Prototype (Milestone 3), focusing on interactive user dialogue and
+  content delivery, with a subsequent update to localize all user interaction to Brazilian Portuguese based on user
+  request.

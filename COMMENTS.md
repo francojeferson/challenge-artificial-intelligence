@@ -12,12 +12,15 @@ following a pipeline pattern for data flow through distinct components:
 - **Indexing & Search**: The indexing module, recently introduced with index_manager.py, builds an efficient search
   index from ingested resources. It supports both keyword and semantic search to enable relevant resource retrieval,
   forming the foundation for adaptive content delivery.
-- **Adaptive Prompt Engine**: (In development) This component will interact with users to assess knowledge gaps and
-  learning preferences through a conversational interface, querying the index to retrieve relevant content.
+- **Adaptive Prompt Engine**: Implemented as a prototype (Milestone 3) with the `PromptEngine` class in
+  'prompt_engine.py'. This component interacts with users to assess knowledge gaps and learning preferences through a
+  conversational interface, querying the index to retrieve relevant content. It has been localized to Brazilian
+  Portuguese (PT-BR) to support language-specific user engagement.
 - **Content Generation**: (In development) This module will dynamically create personalized learning content based on
   user needs, adapting format and complexity as required.
-- **User Interface**: (In development) The UI will provide an intuitive, conversational experience for users,
-  facilitating interaction with the prompt engine and delivery of adaptive content.
+- **User Interface**: (In development) The UI will provide an intuitive, conversational experience for users beyond the
+  current command-line interaction in 'run.py', facilitating interaction with the prompt engine and delivery of adaptive
+  content.
 
 Data flows from ingestion to indexing, then to the prompt engine and content generation, and finally to the user
 interface, with continuous feedback loops to adapt to user interactions. All processing is local to ensure privacy, and
@@ -79,10 +82,12 @@ privacy.
   processing to handle bulk resources efficiently.
 - **Advanced Search Capabilities**: Enhance the indexing module with semantic search using embeddings from
   sentence-transformers to improve relevance in resource retrieval.
-- **Adaptive Prompt Engine**: Develop the prompt engine with iterative testing to refine user knowledge assessment
-  accuracy, incorporating user feedback loops.
+- **Adaptive Prompt Engine**: Further refine the prompt engine with iterative testing to improve user knowledge
+  assessment accuracy using advanced NLP techniques (e.g., LangChain, LlamaIndex), incorporating user feedback loops.
+- **Localization Enhancements**: Continue to enhance language-specific interactions based on user feedback, potentially
+  supporting additional languages or dialects beyond Brazilian Portuguese.
 - **User Interface Development**: Create a responsive, conversational UI that supports multiple content formats (text,
-  video, audio) for a seamless learning experience.
+  video, audio) for a seamless learning experience beyond the current command-line interaction.
 - **Performance Tuning**: Address potential performance bottlenecks with large datasets by exploring more efficient
   indexing solutions or caching strategies.
 - **Transcription Accuracy**: Explore alternative transcription models or configurations to improve accuracy for video
@@ -92,17 +97,17 @@ privacy.
 
 ## Unmet Requirements
 
-- **Adaptive Prompt Engine**: Not yet implemented. This requires prototyping to assess user knowledge gaps and generate
-  dynamic content. Planned for the next development phase with libraries like LangChain or LlamaIndex.
 - **Content Generation Module**: Currently unmet. This module will depend on the prompt engine and indexed data to
-  create personalized content, adapting to user preferences. Development is scheduled after the prompt engine prototype.
-- **User Interface**: Not yet developed. An intuitive, conversational interface is required to deliver adaptive content
-  and gather user feedback. This will be addressed after core backend components are complete.
+  create personalized content, adapting to user preferences. Development is scheduled for the next phase (Milestone 4).
+- **User Interface**: Not yet fully developed. An intuitive, conversational interface beyond the current command-line
+  interaction in 'run.py' is required to deliver adaptive content and gather user feedback. This will be addressed in
+  Milestone 5.
 - **Integration & Testing**: Full system integration and testing are pending until all modules (ingestion, indexing,
   prompt engine, content generation, UI) are implemented. This will ensure all components work cohesively to meet PRD
-  success criteria.
+  success criteria (Milestone 6).
 - **Documentation Finalization**: While initial documentation is in place, finalization (including comprehensive
-  architecture details and unmet requirements in COMMENTS.md) will occur after all functional components are complete.
+  architecture details and unmet requirements in COMMENTS.md) will occur after all functional components are complete
+  (Milestone 7).
 
-These unmet requirements are tracked with planned mitigation through phased development, focusing first on completing
-backend modules before moving to user-facing components and final integration.
+These unmet requirements are tracked with planned mitigation through phased development, focusing on completing backend
+modules before moving to advanced user-facing components and final integration.
