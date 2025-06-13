@@ -1,0 +1,10 @@
+{
+  "test_user": {
+    "format_preference": "text",
+    "last_updated": "0.6875"
+  },
+  "test_user_rating": {
+    "format_preference": "video",
+    "last_updated": "0.6875"
+  }
+}

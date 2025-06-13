@@ -34,6 +34,9 @@ function App() {
   const [preferredFormat, setPreferredFormat] = useState(loadPreferredFormat())
   const [userId, setUserId] = useState(loadUserId())
   const [feedback, setFeedback] = useState('')
+  const [feedbackRating, setFeedbackRating] = useState(0)
+  const [feedbackRelevance, setFeedbackRelevance] = useState(0)
+  const [feedbackEffectiveness, setFeedbackEffectiveness] = useState(0)
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false)
   const messagesEndRef = useRef(null)
 
@@ -114,12 +117,19 @@ function App() {
       const response = await fetch('/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: feedback, user_id: userId }),
+        body: JSON.stringify({
+          message: `${feedback} (Avaliação Geral: ${feedbackRating}/5, Relevância do Conteúdo: ${feedbackRelevance}/5, Efetividade do Sistema: ${feedbackEffectiveness}/5)`,
+          user_id: userId,
+          format: preferredFormat,
+        }),
       })
       const data = await response.json()
       if (data.status === 'success') {
         setFeedbackSubmitted(true)
         setFeedback('')
+        setFeedbackRating(0)
+        setFeedbackRelevance(0)
+        setFeedbackEffectiveness(0)
         // Show a confirmation message for a short time
         setTimeout(() => setFeedbackSubmitted(false), 3000)
       }
@@ -127,9 +137,12 @@ function App() {
       console.error('Error submitting feedback:', error)
       setFeedbackSubmitted(true)
       setFeedback('')
+      setFeedbackRating(0)
+      setFeedbackRelevance(0)
+      setFeedbackEffectiveness(0)
       setTimeout(() => setFeedbackSubmitted(false), 3000)
     }
-  }, [feedback, userId])
+  }, [feedback, feedbackRating, feedbackRelevance, feedbackEffectiveness, userId, preferredFormat])
 
   const handleClearChat = () => {
     if (window.confirm('Tem certeza de que deseja limpar o histórico de chat? Esta ação não pode ser desfeita.')) {
@@ -227,6 +240,42 @@ function App() {
             onKeyPress={handleFeedbackKeyPress}
             className="feedback-input"
           />
+          <div className="feedback-rating">
+            <span>Avaliação Geral:</span>
+            {[1, 2, 3, 4, 5].map((rating) => (
+              <span
+                key={rating}
+                className={`rating-star ${feedbackRating >= rating ? 'active' : ''}`}
+                onClick={() => setFeedbackRating(rating)}
+              >
+                ★
+              </span>
+            ))}
+          </div>
+          <div className="feedback-rating">
+            <span>Relevância do Conteúdo:</span>
+            {[1, 2, 3, 4, 5].map((rating) => (
+              <span
+                key={rating}
+                className={`rating-star ${feedbackRelevance >= rating ? 'active' : ''}`}
+                onClick={() => setFeedbackRelevance(rating)}
+              >
+                ★
+              </span>
+            ))}
+          </div>
+          <div className="feedback-rating">
+            <span>Efetividade do Sistema:</span>
+            {[1, 2, 3, 4, 5].map((rating) => (
+              <span
+                key={rating}
+                className={`rating-star ${feedbackEffectiveness >= rating ? 'active' : ''}`}
+                onClick={() => setFeedbackEffectiveness(rating)}
+              >
+                ★
+              </span>
+            ))}
+          </div>
           <button onClick={handleFeedbackSubmit} className="feedback-button">
             Enviar Feedback
           </button>

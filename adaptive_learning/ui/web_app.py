@@ -75,6 +75,29 @@ async def post_feedback(feedback_input: UserInput):
     except Exception as e:
         logger.error(f"Error writing to feedback file: {str(e)}")
 
+    # Also update user preferences file
+    preferences_file = "user_preferences.json"
+    if os.path.exists(preferences_file):
+        try:
+            with open(preferences_file, "r") as f:
+                preferences_data = json.load(f)
+        except Exception as e:
+            logger.error(f"Error reading preferences file: {str(e)}")
+            preferences_data = {}
+    else:
+        preferences_data = {}
+
+    if user_id:
+        preferences_data[user_id] = {
+            "format_preference": format_preference,
+            "last_updated": str(os.times().system),
+        }
+        try:
+            with open(preferences_file, "w") as f:
+                json.dump(preferences_data, f, indent=2)
+        except Exception as e:
+            logger.error(f"Error writing to preferences file: {str(e)}")
+
     return {
         "status": "success",
         "message": "Obrigado pelo seu feedback! Sua opinião é muito importante para nós.",
@@ -113,6 +136,24 @@ async def post_message(user_input: UserInput):
 
     logger.info(f"Cache miss for message: {user_message}, processing request.")
 
+    # Check for saved user preferences
+    saved_format = user_format
+    if user_id:
+        preferences_file = "user_preferences.json"
+        if os.path.exists(preferences_file):
+            try:
+                with open(preferences_file, "r") as f:
+                    preferences_data = json.load(f)
+                if user_id in preferences_data:
+                    saved_format = preferences_data[user_id].get(
+                        "format_preference", user_format
+                    )
+                    logger.info(
+                        f"Using saved format preference {saved_format} for user {user_id}"
+                    )
+            except Exception as e:
+                logger.error(f"Error reading preferences file: {str(e)}")
+
     try:
         from adaptive_learning.prompt.prompt_engine import PromptEngine
         from adaptive_learning.indexing.index_manager import IndexManager
@@ -127,7 +168,7 @@ async def post_message(user_input: UserInput):
             ContentGenerationFactory,
         )
 
-        content_generator = ContentGenerationFactory.get_generator(user_format)
+        content_generator = ContentGenerationFactory.get_generator(saved_format)
         engine.content_generator = content_generator
         engine.set_indexed_data(index_manager)
 

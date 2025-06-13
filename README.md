@@ -107,6 +107,8 @@ Docker. Siga as instruções abaixo para configurar e executar o projeto de acor
      Certifique-se de que os dados estejam disponíveis nesse diretório.
    - Monitore a saída no terminal para verificar o progresso. Se o modelo Vosk não for encontrado, ajuste o caminho no
      'video_ingestor.py' ou defina a variável de ambiente 'VOSK_MODEL_PATH'.
+   - Para acessar a interface web, execute o servidor FastAPI com: `uvicorn adaptive_learning.ui.web_app:app --reload` e
+     abra seu navegador em `http://localhost:8000`.
 
 5. **Interrompa a Execução**:
    - Pressione Ctrl+C no terminal para interromper o processo, se necessário.
@@ -141,13 +143,15 @@ Docker. Siga as instruções abaixo para configurar e executar o projeto de acor
      contêiner ('-p 8000:8000'), nomeia o contêiner como 'adaptive-learning-container', e inicia o servidor web FastAPI
      automaticamente.
    - O contêiner executará o sistema de aprendizagem adaptativa, acessível via navegador em `http://localhost:8000`, com
-     funcionalidades como persistência de sessão, seleção de preferência de formato de conteúdo e mecanismos de feedback
+     funcionalidades como persistência de sessão via localStorage e server-side storage, seleção de preferência de
+     formato de conteúdo, e mecanismos de feedback com avaliações multidimensionais (geral, relevância, eficácia)
      totalmente integrados.
 
 5. **Monitore a Saída**:
 
    - Você verá a saída de 'run.py' no terminal, mostrando o progresso da ingestão e indexação de recursos. Se encontrar
      problemas, verifique as mensagens de erro para orientação sobre dependências ausentes ou configuração.
+   - Para visualizar os logs do contêiner, use `docker logs adaptive-learning-container`.
 
 6. **Interrompa o Contêiner**:
    - Para parar o contêiner, use o comando `docker stop adaptive-learning-container` e, se desejar removê-lo, use
@@ -168,3 +172,30 @@ VOSK_MODEL_PATH=/caminho/para/o/modelo' ao comando 'docker run' com o caminho co
    - Quais requisitos obrigatórios que não foram entregues
 4. Informe ao recrutador quando concluir o desafio junto com o link do repositório
 5. Após revisão do projeto junto com a equipe de desenvolvimento deixe seu repositório privado
+
+# Status do Projeto
+
+O sistema de aprendizagem adaptativa está em um estágio avançado de desenvolvimento com as seguintes realizações:
+
+- **Indexação de Dados**: Todos os tipos de recursos (texto, PDF, vídeo, imagem) foram ingeridos e indexados com sucesso
+  para recuperação eficiente.
+- **Prompt de Aprendizagem Adaptativa**: Um prompt interativo foi construído utilizando spaCy para análise semântica,
+  identificando lacunas de conhecimento e preferências de formato do usuário (texto, vídeo, áudio).
+- **Interface do Usuário**: Interface web totalmente implementada com FastAPI (backend) e React (frontend), integrada ao
+  Prompt Engine para entrega dinâmica de conteúdo, acessível em `http://localhost:8000`, com persistência de sessão via
+  localStorage e armazenamento no servidor, seleção de preferência de formato de conteúdo, e mecanismo de feedback
+  aprimorado com avaliações multidimensionais (geral, relevância, eficácia).
+- **Testes**: Testes de integração atualizados para endpoints de API (mensagem e feedback) em 'test_integration.py', com
+  todos os testes passando, validando funcionalidade central, interação do usuário, responsividade da UI, e precisão na
+  adaptação de conteúdo.
+- **Documentação**: Atualizações contínuas em arquivos de memória (`progress.md`, `productContext.md`,
+  `activeContext.md`, `raw_reflection_log.md`) e documentos do projeto (`PRD.md`, `COMMENTS.md`, `README.md`,
+  `adaptive_learning/ui/README.md`) para refletir o estado atual, melhorias recentes, e próximos passos.
+
+**Pendências**:
+
+- Integração de frameworks avançados de NLP (como LangChain ou LlamaIndex) para geração de conteúdo mais contextual e
+  personalizado.
+- Testes adicionais de ponta a ponta para cenários de usuário diversos e casos extremos.
+- Otimização de desempenho para grandes conjuntos de dados e usuários concorrentes.
+- Gerenciamento final do repositório e entrega conforme instruções do projeto.

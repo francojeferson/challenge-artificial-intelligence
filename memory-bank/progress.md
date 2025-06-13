@@ -2,95 +2,63 @@
 
 ## What Works
 
-- Resource ingestion and indexing across all types: text, PDF, image, and video, with successful processing confirmed in
-  recent runs.
-- Video transcription operational with the 'vosk-model-small-pt-0.3' model for Brazilian Portuguese content, verified in
-  both local and Docker environments, loading the model from './vosk-model-small-pt-0.3'.
-- Error handling for text processing to skip NLTK operations if required data is missing, ensuring ingestion continuity.
-- Audio conversion fallbacks in video ingestion using 'moviepy' when 'ffmpeg' is not directly available, maintaining
-  functionality.
-- Metadata extraction and storage even when content extraction fails, ensuring all resources are accounted for in the
-  index.
-- Updated Docker configuration to support containerized deployment, with resolved dependency issues for building the
-  image, including copying the Vosk model and downloading NLTK data during the build process.
-- Successful Docker image build and container run, confirming the application operates as expected in a containerized
-  environment with all necessary resources available.
-- Adaptive Prompt Engine (Milestone 3) enhanced with spaCy for NLP-based knowledge gap assessment, enabling more
-  accurate topic classification and personalized content delivery via 'prompt_engine.py'.
-- Improved content retrieval in `PromptEngine` with an expanded fallback mechanism to provide meaningful responses for
-  general queries and specific topics.
-- Localized user interaction to Brazilian Portuguese (PT-BR), with prompts, responses, and interface text updated for a
-  consistent language experience.
-- Implemented a retry mechanism for temporary file deletion in 'video_ingestor.py', reducing the risk of disk space
-  issues by attempting deletion multiple times before logging a warning.
-- Confirmed the installation of the spaCy model 'en_core_web_sm', ensuring readiness for enhanced text processing
-  without additional setup.
-- Developed a web-based user interface using FastAPI and React, providing a conversational chat interface for adaptive
-  learning, now integrated with `PromptEngine` for dynamic content delivery via 'web_app.py' with improved logging and
-  error handling.
-- Integrated the React frontend build process into the Dockerfile, ensuring the web UI is built and served correctly in
-  both local and containerized environments.
-- Added comprehensive integration tests in 'test_integration.py' for the API endpoint, covering user interaction,
-  content delivery, fallback scenarios for general queries, and updated error handling messages.
-- Updated `run.py` to support both CLI and web UI interaction modes, with an option to start the FastAPI server for web
-  interaction.
-- Updated project documentation, including `COMMENTS.md` and Memory Bank files, with detailed architecture decisions,
-  library usage, setup instructions, and project status for both local and Docker environments.
-- Successfully set up the virtual environment with Python 3.11 and installed all required dependencies, resolving
-  compatibility issues with NumPy and other libraries.
-- Executed integration tests in 'test_integration.py', with all 6 tests passing, confirming the functionality of the
-  adaptive learning system's API and content delivery mechanisms.
-- Confirmed successful operation of the web UI in both Docker and localhost environments, with features like session
-  persistence, user preference selection for content format, and feedback mechanisms fully integrated.
-- Successfully built and deployed the Adaptive Learning System in a Docker container named
-  'adaptive-learning-container', running in detached mode with port 8000 mapped to the host, ensuring accessibility on
-  `localhost:8000`.
+- **Resource Ingestion and Indexing**: All resource types (text, PDF, video, image) are successfully ingested and
+  indexed for retrieval. Video transcription is fully operational using the 'vosk-model-small-pt-0.3' model for
+  Brazilian Portuguese content.
+- **Adaptive Prompt Engine**: The prompt engine is fully functional, enhanced with spaCy for NLP-based knowledge gap
+  assessment and improved content retrieval mechanisms, ensuring relevant responses to user queries.
+- **Content Generation**: Basic content adaptation is in place, generating dynamic content based on user input and
+  indexed data. Content is delivered in user-preferred formats (text, video, audio).
+- **User Interface**: The web UI is fully implemented using FastAPI for the backend and React for the frontend,
+  integrated with the Prompt Engine for dynamic content delivery. It is operational on both localhost and Docker
+  environments, featuring session persistence via localStorage and server-side storage, user preference selection for
+  content format, and an enhanced feedback mechanism with multi-dimensional ratings (general, relevance, effectiveness).
+- **Integration and Testing**: Integration tests for API endpoints (message and feedback) are updated in
+  `test_integration.py`, with all tests passing, validating core functionality, user interaction, UI responsiveness, and
+  content adaptation accuracy.
 
 ## What's Left to Build
 
-- Continue refining the web UI based on user feedback to further improve usability and ensure robust session persistence
-  and user preference selection for content format (text, video, audio), advancing Milestone 5.
-- Conduct further end-to-end testing to validate UI responsiveness and content adaptation accuracy across diverse user
-  scenarios, completing Milestone 6.
-- Gather user feedback on the system's effectiveness in identifying knowledge gaps and delivering relevant content to
-  inform further iterations.
-- Explore advanced NLP integration (e.g., LangChain, LlamaIndex) for more nuanced content generation as a potential
-  enhancement.
-- Finalize repository management and delivery steps (Milestone 8) as per project instructions, including forking,
-  pushing code, and notifying the recruiter.
+- **Advanced Content Generation**: Integration of advanced NLP frameworks like LangChain or LlamaIndex for more nuanced
+  content generation and contextual memory in longer conversations is pending. This will enhance the depth and
+  personalization of learning content.
+- **Comprehensive End-to-End Testing**: Additional testing for UI responsiveness and content adaptation accuracy across
+  diverse user scenarios and edge cases (e.g., unavailable content, general queries) is needed to ensure system
+  reliability under varied conditions.
+- **Performance Optimization**: Optimization for handling large datasets and concurrent users with efficient indexing
+  solutions (e.g., Elasticsearch, Pinecone) to improve scalability and response times.
+- **Repository Management and Delivery**: Final steps for forking the repository, pushing code to GitHub, and notifying
+  the recruiter as per project instructions remain to be completed, marking the final submission phase.
 
 ## Current Status
 
-- The system is fully operational for ingesting and indexing resources of all supported types, both locally and in a
-  Docker container.
-- Video transcription is active with the lightweight model 'vosk-model-small-pt-0.3' for Brazilian Portuguese content.
-- Adaptive Prompt Engine is significantly improved with NLP capabilities for better knowledge gap assessment and content
-  retrieval.
-- Web UI is implemented and integrated with `PromptEngine` for dynamic user interaction via FastAPI backend and React
-  frontend, with enhanced error handling and logging.
-- Integration tests are updated in `test_integration.py` to cover general query fallback responses and current error
-  messages, validating API functionality, with all 6 tests passing as of the latest run.
-- `run.py` now supports both CLI and web UI modes, allowing users to start the FastAPI server for web interaction.
-- Documentation is updated in `COMMENTS.md` and Memory Bank files to reflect the current state and technical decisions.
-- Virtual environment setup completed with Python 3.11, ensuring all dependencies are installed and compatible for
-  development and testing.
-- Successfully deployed the Adaptive Learning System in a Docker container named 'adaptive-learning-container', running
-  in detached mode with port 8000 mapped to the host, ensuring accessibility on `localhost:8000`.
+The adaptive learning system is in an advanced stage of development with core functionalities operational. Recent
+enhancements include server-side persistence for user preferences, detailed feedback mechanisms for deeper user
+insights, and successful integration testing. The system meets privacy requirements with local data processing and
+adheres to high code quality and modular design standards. Documentation updates are in progress to finalize project
+records before delivery.
 
 ## Known Issues
 
-- Temporary file deletion warnings during video ingestion due to file access conflicts are mitigated but may still
-  appear.
-- Alternative Vosk model fails to load due to CARPA file issues; current model 'vosk-model-small-pt-0.3' is used.
-- Some npm package deprecation warnings during frontend build; no critical impact on functionality.
+- **Content Generation Depth**: Current content generation lacks advanced contextual understanding for complex user
+  queries. This will be addressed with potential integrations of advanced NLP frameworks.
+- **Testing Coverage**: While core API endpoints are tested, broader end-to-end testing for diverse user scenarios and
+  UI interactions is incomplete, which may reveal unaddressed edge cases.
+- **Scalability**: Performance with large datasets or high user concurrency has not been fully tested or optimized,
+  which could impact response times in production environments.
 
 ## Evolution of Project Decisions
 
-- Prioritized local, privacy-respecting processing with open-source tools to align with non-functional requirements.
-- Shifted from CLI to web-based UI for better user experience, now fully integrated with backend logic for adaptive
-  content.
-- Integrated frontend build into Docker for consistent deployment across environments.
-- Adopted modular design and clear separation of concerns to support extensibility.
-- Emphasized detailed documentation and iterative development, with recent updates to Memory Bank and `COMMENTS.md` for
-  traceability.
-- Focused on NLP enhancements with spaCy to improve knowledge gap classification over basic keyword matching.
+- **Initial Focus**: Early development prioritized data ingestion and indexing across multiple resource types,
+  establishing a robust foundation for content retrieval.
+- **Prompt Engine Enhancement**: The prompt engine was enhanced with spaCy for semantic analysis, improving knowledge
+  gap identification and user interaction quality.
+- **UI Development**: Shifted focus to a fully integrated web UI with FastAPI and React, providing a conversational
+  interface with session persistence and user preference features for a personalized experience.
+- **Feedback Mechanism**: Expanded the feedback system to capture multi-dimensional user ratings (general, relevance,
+  effectiveness), enabling detailed insights for continuous system improvement.
+- **Testing Strategy**: Adjusted testing approach to mitigate cache interference by using unique identifiers in test
+  inputs, ensuring accurate validation of system responses.
+- **Documentation and Delivery**: Current focus is on finalizing comprehensive documentation across memory bank files
+  and project documents (`PRD.md`, `COMMENTS.md`, `README.md`) to meet delivery criteria and ensure traceability to
+  project goals.

@@ -1,0 +1,62 @@
+[
+  {
+    "user_id": "test_user",
+    "feedback": "O conte\u00fado foi muito \u00fatil!",
+    "format_preference": "text",
+    "timestamp": "0.6875"
+  },
+  {
+    "user_id": "test_user_rating",
+    "feedback": "O conte\u00fado foi muito \u00fatil! (Avalia\u00e7\u00e3o: 5/5)",
+    "format_preference": "video",
+    "timestamp": "0.6875"
+  },
+  {
+    "user_id": "test_user",
+    "feedback": "O conte\u00fado foi muito \u00fatil!",
+    "format_preference": "text",
+    "timestamp": "0.546875"
+  },
+  {
+    "user_id": "test_user_rating",
+    "feedback": "O conte\u00fado foi muito \u00fatil! (Avalia\u00e7\u00e3o: 5/5)",
+    "format_preference": "video",
+    "timestamp": "0.546875"
+  },
+  {
+    "user_id": "test_user",
+    "feedback": "O conte\u00fado foi muito \u00fatil!",
+    "format_preference": "text",
+    "timestamp": "0.65625"
+  },
+  {
+    "user_id": "test_user_rating",
+    "feedback": "O conte\u00fado foi muito \u00fatil! (Avalia\u00e7\u00e3o: 5/5)",
+    "format_preference": "video",
+    "timestamp": "0.65625"
+  },
+  {
+    "user_id": "test_user",
+    "feedback": "O conte\u00fado foi muito \u00fatil!",
+    "format_preference": "text",
+    "timestamp": "0.453125"
+  },
+  {
+    "user_id": "test_user_rating",
+    "feedback": "O conte\u00fado foi muito \u00fatil! (Avalia\u00e7\u00e3o: 5/5)",
+    "format_preference": "video",
+    "timestamp": "0.453125"
+  },
+  {
+    "user_id": "test_user",
+    "feedback": "O conte\u00fado foi muito \u00fatil!",
+    "format_preference": "text",
+    "timestamp": "0.6875"
+  },
+  {
+    "user_id": "test_user_rating",
+    "feedback": "O conte\u00fado foi muito \u00fatil! (Avalia\u00e7\u00e3o: 5/5)",
+    "format_preference": "video",
+    "timestamp": "0.6875"
+  }
+]
