@@ -162,6 +162,26 @@ class TestWebAppIntegration(unittest.TestCase):
         self.assertIn("Tutorial de Loops em Vídeo", response_data["response"])
         self.assertIn("vídeo explicando loops", response_data["response"])
 
+    def test_api_feedback_endpoint_submission(self):
+        # Send a request to the feedback endpoint
+        feedback_message = "O conteúdo foi muito útil!"
+        response = self.client.post(
+            "/api/feedback",
+            json={
+                "message": feedback_message,
+                "format": "text",
+                "user_id": "test_user",
+            },
+        )
+
+        # Assert the response status code and success message
+        self.assertEqual(response.status_code, 200)
+        response_data = response.json()
+        self.assertIn("status", response_data)
+        self.assertEqual(response_data["status"], "success")
+        self.assertIn("message", response_data)
+        self.assertIn("Obrigado pelo seu feedback", response_data["message"])
+
 
 if __name__ == "__main__":
     unittest.main()

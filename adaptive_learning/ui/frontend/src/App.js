@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import './App.css'
 
 function App() {
@@ -95,9 +95,20 @@ function App() {
 
   const handleFormatChange = (format) => {
     setPreferredFormat(format)
+    setMessages((prev) => [
+      ...prev,
+      {
+        sender: 'bot',
+        text: `Formato preferido alterado para: ${
+          format === 'text' ? 'Texto' : format === 'video' ? 'Vídeo' : 'Áudio'
+        }`,
+        timestamp: new Date(),
+        id: Date.now(),
+      },
+    ])
   }
 
-  const handleFeedbackSubmit = async () => {
+  const handleFeedbackSubmit = useCallback(async () => {
     if (!feedback.trim()) return
     try {
       const response = await fetch('/api/feedback', {
@@ -118,13 +129,23 @@ function App() {
       setFeedback('')
       setTimeout(() => setFeedbackSubmitted(false), 3000)
     }
-  }
+  }, [feedback, userId])
 
-  const handleFeedbackKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleFeedbackSubmit()
+  const handleClearChat = () => {
+    if (window.confirm('Tem certeza de que deseja limpar o histórico de chat? Esta ação não pode ser desfeita.')) {
+      setMessages([{ sender: 'bot', text: 'Olá! Como posso ajudar você hoje?', timestamp: new Date(), id: Date.now() }])
+      localStorage.removeItem('chatMessages')
     }
   }
+
+  const handleFeedbackKeyPress = useCallback(
+    (e) => {
+      if (e.key === 'Enter') {
+        handleFeedbackSubmit()
+      }
+    },
+    [handleFeedbackSubmit],
+  )
 
   const formatTimestamp = (date) => {
     return new Intl.DateTimeFormat('pt-BR', {
@@ -133,18 +154,23 @@ function App() {
     }).format(date)
   }
 
+  // Memoize the message list to prevent unnecessary re-renders
+  const messageList = useMemo(() => {
+    return messages.map((msg) => (
+      <div key={msg.id} className={`message ${msg.sender}`}>
+        {msg.text}
+        <span className="message-timestamp">{formatTimestamp(msg.timestamp)}</span>
+      </div>
+    ))
+  }, [messages, formatTimestamp])
+
   return (
     <div className="chat-container">
       <div className="chat-header">
         <h1>Sistema de Aprendizagem Adaptativa</h1>
       </div>
       <div className="chat-messages">
-        {messages.map((msg) => (
-          <div key={msg.id} className={`message ${msg.sender}`}>
-            {msg.text}
-            <span className="message-timestamp">{formatTimestamp(msg.timestamp)}</span>
-          </div>
-        ))}
+        {messageList}
         {isLoading && (
           <div className="loading-indicator">
             <div className="loading-dot"></div>
@@ -170,22 +196,28 @@ function App() {
           <div
             className={`pref-option ${preferredFormat === 'text' ? 'active' : ''}`}
             onClick={() => handleFormatChange('text')}
+            title="Receba conteúdo em formato de texto simples."
           >
             Texto
           </div>
           <div
             className={`pref-option ${preferredFormat === 'video' ? 'active' : ''}`}
             onClick={() => handleFormatChange('video')}
+            title="Receba conteúdo em formato de vídeo explicativo."
           >
             Vídeo
           </div>
           <div
             className={`pref-option ${preferredFormat === 'audio' ? 'active' : ''}`}
             onClick={() => handleFormatChange('audio')}
+            title="Receba conteúdo em formato de áudio para escutar."
           >
             Áudio
           </div>
         </div>
+        <button onClick={handleClearChat} className="clear-chat-button">
+          Limpar Chat
+        </button>
         <div className="feedback-area">
           <input
             type="text"

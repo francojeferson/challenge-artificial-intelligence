@@ -228,6 +228,27 @@ body {
   box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
 }
 
+.clear-chat-button {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s;
+  align-self: center;
+}
+
+.clear-chat-button:hover {
+  background: #c82333;
+}
+
+.clear-chat-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.5);
+}
+
 .feedback-area {
   width: 100%;
   margin-top: 10px;

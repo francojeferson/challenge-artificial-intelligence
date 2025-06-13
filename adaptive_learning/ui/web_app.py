@@ -44,8 +44,9 @@ logger = logging.getLogger(__name__)
 async def post_feedback(feedback_input: UserInput):
     feedback_message = feedback_input.message
     user_id = feedback_input.user_id
+    format_preference = feedback_input.format
     logger.info(
-        f"Received feedback: {feedback_message} from user {user_id if user_id else 'anonymous'}"
+        f"Received feedback: {feedback_message} from user {user_id if user_id else 'anonymous'} with format preference: {format_preference}"
     )
 
     # For now, just log the feedback; in production, store in a database
@@ -53,20 +54,31 @@ async def post_feedback(feedback_input: UserInput):
     feedback_entry = {
         "user_id": user_id if user_id else "anonymous",
         "feedback": feedback_message,
+        "format_preference": format_preference,
         "timestamp": str(os.times().system),
     }
 
     if os.path.exists(feedback_file):
-        with open(feedback_file, "r") as f:
-            feedback_data = json.load(f)
+        try:
+            with open(feedback_file, "r") as f:
+                feedback_data = json.load(f)
+        except Exception as e:
+            logger.error(f"Error reading feedback file: {str(e)}")
+            feedback_data = []
     else:
         feedback_data = []
 
     feedback_data.append(feedback_entry)
-    with open(feedback_file, "w") as f:
-        json.dump(feedback_data, f, indent=2)
+    try:
+        with open(feedback_file, "w") as f:
+            json.dump(feedback_data, f, indent=2)
+    except Exception as e:
+        logger.error(f"Error writing to feedback file: {str(e)}")
 
-    return {"status": "success", "message": "Obrigado pelo seu feedback!"}
+    return {
+        "status": "success",
+        "message": "Obrigado pelo seu feedback! Sua opinião é muito importante para nós.",
+    }
 
 
 @app.post("/api/message")
@@ -81,6 +93,25 @@ async def post_message(user_input: UserInput):
     # Define default values for prompt to avoid UnboundLocalError in case of exception
     prompt = "Oi! Como posso te ajudar com programação hoje?"
     content = None
+
+    # Simple in-memory cache for responses
+    from collections import OrderedDict
+
+    if not hasattr(post_message, "cache"):
+        post_message.cache = OrderedDict()
+        post_message.cache_size = 100  # Limit cache size to prevent memory issues
+
+    # Create a cache key based on user message and format
+    cache_key = (user_message, user_format)
+    if cache_key in post_message.cache:
+        logger.info(f"Cache hit for message: {user_message}")
+        cached_response = post_message.cache[cache_key]
+        return {
+            "response": cached_response["response"],
+            "prompt": cached_response["prompt"],
+        }
+
+    logger.info(f"Cache miss for message: {user_message}, processing request.")
 
     try:
         from adaptive_learning.prompt.prompt_engine import PromptEngine
@@ -127,4 +158,10 @@ async def post_message(user_input: UserInput):
         logger.error(f"Error processing message: {str(e)}")
         response_text = "Ops, algo deu errado ao processar sua mensagem. Que tal tentar de novo ou explicar de outra forma? Estou aqui pra ajudar!"
 
-    return {"response": response_text, "prompt": prompt}
+    # Store response in cache before returning
+    response_data = {"response": response_text, "prompt": prompt}
+    post_message.cache[cache_key] = response_data
+    if len(post_message.cache) > post_message.cache_size:
+        post_message.cache.popitem(last=False)  # Remove least recently used item
+
+    return response_data
