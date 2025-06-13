@@ -136,14 +136,13 @@ Docker. Siga as instruções abaixo para configurar e executar o projeto de acor
 4. **Execute um Contêiner Docker**:
 
    - Após a construção da imagem, execute um contêiner com o comando:
-     `docker run -it --rm -v <caminho absoluto para o diretório do modelo Vosk>:/home/appuser/vosk-model-small-pt-0.3 adaptive-learning-system`.
-   - Substitua `<caminho absoluto para o diretório do modelo Vosk>` pelo caminho completo do diretório do modelo Vosk em
-     sua máquina (por exemplo,
-     `c:/Users/SEU_USUARIO/CAMINHO_PARA_PASTA/challenge-artificial-intelligence/vosk-model-small-pt-0.3` no Windows).
-   - Este comando executa um contêiner interativamente ('-it'), remove-o quando parado ('--rm'), e monta o diretório do
-     modelo Vosk do sistema local para o contêiner para garantir que o modelo esteja acessível.
-   - O contêiner executará 'python3 run.py' conforme especificado no 'Dockerfile', iniciando o processo de ingestão e
-     indexação de recursos.
+     `docker run -d -p 8000:8000 --name adaptive-learning-container adaptive-learning-system`.
+   - Este comando executa um contêiner em modo detached ('-d'), mapeia a porta 8000 do host para a porta 8000 do
+     contêiner ('-p 8000:8000'), nomeia o contêiner como 'adaptive-learning-container', e inicia o servidor web FastAPI
+     automaticamente.
+   - O contêiner executará o sistema de aprendizagem adaptativa, acessível via navegador em `http://localhost:8000`, com
+     funcionalidades como persistência de sessão, seleção de preferência de formato de conteúdo e mecanismos de feedback
+     totalmente integrados.
 
 5. **Monitore a Saída**:
 
@@ -151,8 +150,8 @@ Docker. Siga as instruções abaixo para configurar e executar o projeto de acor
      problemas, verifique as mensagens de erro para orientação sobre dependências ausentes ou configuração.
 
 6. **Interrompa o Contêiner**:
-   - Quando o processo for concluído ou se precisar interrompê-lo, pressione Ctrl+C no terminal para parar o contêiner.
-     Como '--rm' é usado, o contêiner será removido automaticamente após parar.
+   - Para parar o contêiner, use o comando `docker stop adaptive-learning-container` e, se desejar removê-lo, use
+     `docker rm adaptive-learning-container`.
 
 **Nota**: Se o caminho do modelo Vosk precisar de ajuste ou se você encontrar problemas de permissão com acesso a
 arquivos, pode ser necessário modificar a variável de ambiente 'VOSK_MODEL_PATH' adicionando '-e

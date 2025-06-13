@@ -45,11 +45,13 @@
 
 ## Unmet Mandatory Requirements
 
-- While a basic web UI has been implemented (Milestone 5), further refinements for usability and advanced features
-  (e.g., session persistence, format preference selection UI) are still pending to fully meet user experience goals.
+- The web UI (Milestone 5) is fully implemented using FastAPI for the backend and React for the frontend, integrated
+  with the Prompt Engine for dynamic content delivery, and operational on both localhost and Docker environments, with
+  features like session persistence, user preference selection for content format, and feedback mechanisms now
+  integrated; minor refinements for usability may still be considered based on user feedback.
 - Comprehensive end-to-end testing (Milestone 6) is partially complete with updated integration tests for the API
-  endpoint, but additional testing for UI responsiveness and content adaptation accuracy across diverse scenarios is
-  needed to ensure robustness.
+  endpoint, with all 6 tests passing; additional testing for UI responsiveness and content adaptation accuracy across
+  diverse scenarios is needed to ensure robustness.
 - Final repository management and delivery steps (Milestone 8) remain to be completed as per project instructions for
   forking, pushing, and notifying the recruiter, marking the final project submission phase.
 

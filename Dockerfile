@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y \
 
 # Copy requirements and install Python dependencies
 COPY requirements.txt .
-RUN pip install --upgrade pip && pip install -r requirements.txt
+RUN pip install --upgrade pip && pip install -r requirements.txt && pip install uvicorn fastapi && python -m spacy download en_core_web_sm
 
 # Copy project files
 COPY adaptive_learning ./adaptive_learning

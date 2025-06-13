@@ -26,7 +26,8 @@ This will create a production build in the `build/` directory.
 
 ## Running the Web UI
 
-The FastAPI backend (`adaptive_learning/ui/web_app.py`) serves the built React app.
+The FastAPI backend (`adaptive_learning/ui/web_app.py`) serves the built React app, now fully integrated with features
+like session persistence, user preference selection for content format, and feedback mechanisms.
 
 ### Locally
 
@@ -45,7 +46,7 @@ cd ../../..
 uvicorn adaptive_learning.ui.web_app:app --reload
 ```
 
-3. Open your browser and navigate to `http://localhost:8000` to access the web UI.
+3. Open your browser and navigate to `http://localhost:8000` to access the web UI with all integrated features.
 
 ### Using Docker
 

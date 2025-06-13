@@ -19,10 +19,22 @@ function App() {
     return localStorage.getItem('preferredFormat') || 'text'
   }
 
+  const loadUserId = () => {
+    let userId = localStorage.getItem('userId')
+    if (!userId) {
+      userId = 'user_' + Math.random().toString(36).substr(2, 9)
+      localStorage.setItem('userId', userId)
+    }
+    return userId
+  }
+
   const [messages, setMessages] = useState(loadMessages())
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [preferredFormat, setPreferredFormat] = useState(loadPreferredFormat())
+  const [userId, setUserId] = useState(loadUserId())
+  const [feedback, setFeedback] = useState('')
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false)
   const messagesEndRef = useRef(null)
 
   const scrollToBottom = () => {
@@ -54,7 +66,7 @@ function App() {
       const response = await fetch('/api/message', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userMessage, format: preferredFormat }),
+        body: JSON.stringify({ message: userMessage, format: preferredFormat, user_id: userId }),
       })
       const data = await response.json()
       // Check if the response contains a prompt and content separately
@@ -83,6 +95,35 @@ function App() {
 
   const handleFormatChange = (format) => {
     setPreferredFormat(format)
+  }
+
+  const handleFeedbackSubmit = async () => {
+    if (!feedback.trim()) return
+    try {
+      const response = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: feedback, user_id: userId }),
+      })
+      const data = await response.json()
+      if (data.status === 'success') {
+        setFeedbackSubmitted(true)
+        setFeedback('')
+        // Show a confirmation message for a short time
+        setTimeout(() => setFeedbackSubmitted(false), 3000)
+      }
+    } catch (error) {
+      console.error('Error submitting feedback:', error)
+      setFeedbackSubmitted(true)
+      setFeedback('')
+      setTimeout(() => setFeedbackSubmitted(false), 3000)
+    }
+  }
+
+  const handleFeedbackKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleFeedbackSubmit()
+    }
   }
 
   const formatTimestamp = (date) => {
@@ -144,6 +185,20 @@ function App() {
           >
             Áudio
           </div>
+        </div>
+        <div className="feedback-area">
+          <input
+            type="text"
+            placeholder="Feedback sobre o conteúdo..."
+            value={feedback}
+            onChange={(e) => setFeedback(e.target.value)}
+            onKeyPress={handleFeedbackKeyPress}
+            className="feedback-input"
+          />
+          <button onClick={handleFeedbackSubmit} className="feedback-button">
+            Enviar Feedback
+          </button>
+          {feedbackSubmitted && <div className="feedback-confirmation">Obrigado pelo seu feedback!</div>}
         </div>
       </div>
     </div>

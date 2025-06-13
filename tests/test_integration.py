@@ -130,6 +130,38 @@ class TestWebAppIntegration(unittest.TestCase):
             "Parece que não encontrei um conteúdo específico", response_data["response"]
         )
 
+    @patch(
+        "adaptive_learning.prompt.prompt_engine.PromptEngine.process_user_interaction"
+    )
+    def test_api_message_endpoint_content_format_preference(
+        self, mock_process_interaction
+    ):
+        # Mock the PromptEngine's response based on preferred content format
+        mock_response = {
+            "prompt": "Entendi que você prefere conteúdo em vídeo. Vamos falar sobre loops?",
+            "content": {
+                "title": "Tutorial de Loops em Vídeo",
+                "type": "video",
+                "content": "Aqui está um vídeo explicando loops em programação.",
+            },
+            "status": "success",
+        }
+        mock_process_interaction.return_value = mock_response
+
+        # Send a request to the API endpoint with a specific format preference
+        response = self.client.post(
+            "/api/message", json={"message": "Não entendo loops", "format": "video"}
+        )
+
+        # Assert the response status code and content respects the format preference
+        self.assertEqual(response.status_code, 200)
+        response_data = response.json()
+        self.assertIn("response", response_data)
+        self.assertIn("prompt", response_data)
+        self.assertEqual(response_data["prompt"], mock_response["prompt"])
+        self.assertIn("Tutorial de Loops em Vídeo", response_data["response"])
+        self.assertIn("vídeo explicando loops", response_data["response"])
+
 
 if __name__ == "__main__":
     unittest.main()

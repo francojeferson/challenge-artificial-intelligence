@@ -21,6 +21,7 @@ templates = Jinja2Templates(directory="adaptive_learning/ui/frontend/build")
 class UserInput(BaseModel):
     message: str
     user_id: Optional[str] = None
+    format: Optional[str] = "text"
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -39,10 +40,43 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+@app.post("/api/feedback")
+async def post_feedback(feedback_input: UserInput):
+    feedback_message = feedback_input.message
+    user_id = feedback_input.user_id
+    logger.info(
+        f"Received feedback: {feedback_message} from user {user_id if user_id else 'anonymous'}"
+    )
+
+    # For now, just log the feedback; in production, store in a database
+    feedback_file = "feedback_log.json"
+    feedback_entry = {
+        "user_id": user_id if user_id else "anonymous",
+        "feedback": feedback_message,
+        "timestamp": str(os.times().system),
+    }
+
+    if os.path.exists(feedback_file):
+        with open(feedback_file, "r") as f:
+            feedback_data = json.load(f)
+    else:
+        feedback_data = []
+
+    feedback_data.append(feedback_entry)
+    with open(feedback_file, "w") as f:
+        json.dump(feedback_data, f, indent=2)
+
+    return {"status": "success", "message": "Obrigado pelo seu feedback!"}
+
+
 @app.post("/api/message")
 async def post_message(user_input: UserInput):
     user_message = user_input.message
-    logger.info(f"Received user message: {user_message}")
+    user_format = user_input.format
+    user_id = user_input.user_id
+    logger.info(
+        f"Received user message: {user_message}, preferred format: {user_format}"
+    )
 
     # Define default values for prompt to avoid UnboundLocalError in case of exception
     prompt = "Oi! Como posso te ajudar com programação hoje?"
@@ -52,16 +86,17 @@ async def post_message(user_input: UserInput):
         from adaptive_learning.prompt.prompt_engine import PromptEngine
         from adaptive_learning.indexing.index_manager import IndexManager
 
-        # Initialize or retrieve the PromptEngine instance for this user
-        # For simplicity, create a new instance per request; in production, maintain user sessions
-        # TODO: Implement session management to persist user context across requests using user_id
+        # Session data is managed on the client side using localStorage
+        # No need for server-side session storage
+        session_data = {}
+
         engine = PromptEngine()
         index_manager = IndexManager()
         from adaptive_learning.content_generation.content_generator import (
             ContentGenerationFactory,
         )
 
-        content_generator = ContentGenerationFactory.get_generator("text")
+        content_generator = ContentGenerationFactory.get_generator(user_format)
         engine.content_generator = content_generator
         engine.set_indexed_data(index_manager)
 
@@ -86,6 +121,8 @@ async def post_message(user_input: UserInput):
                 if isinstance(content, str)
                 else "Desculpe, não consegui encontrar conteúdo relevante no momento. Pode me dar mais detalhes sobre o que você precisa?"
             )
+
+        # Session data is managed on the client side, no server-side saving needed
     except Exception as e:
         logger.error(f"Error processing message: {str(e)}")
         response_text = "Ops, algo deu errado ao processar sua mensagem. Que tal tentar de novo ou explicar de outra forma? Estou aqui pra ajudar!"

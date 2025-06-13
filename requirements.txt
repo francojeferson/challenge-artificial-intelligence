@@ -29,6 +29,10 @@ sentence-transformers>=2.2.2  # For generating embeddings in semantic search
 # elasticsearch>=7.13.0
 # pinecone-client>=2.0.0
 
+# Web UI dependencies
+fastapi>=0.68.0
+uvicorn>=0.15.0
+
 # Prompt and dialogue engine (optional, uncomment if used)
 # langchain>=0.0.123
 # llama-index>=0.0.1
