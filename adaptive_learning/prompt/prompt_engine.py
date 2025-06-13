@@ -57,13 +57,14 @@ class PromptEngine:
 
     def assess_user_knowledge(self, user_input: str) -> List[str]:
         """
-        Assess user knowledge gaps based on their input through dialogue.
+        Assess user knowledge gaps based on their input through dialogue with enhanced topic classification.
+        Utilizes NLP techniques with spaCy for deeper semantic analysis if available.
 
         Args:
             user_input (str): The user's response or query.
 
         Returns:
-            List[str]: A list of identified knowledge gaps or topics to address.
+            List[str]: A list of identified knowledge gaps or topics to address, prioritized by relevance.
         """
         # Log user input for tracking
         self.user_context["conversation_history"].append(user_input)
@@ -74,8 +75,8 @@ class PromptEngine:
         knowledge_gaps = current_gaps.copy()  # Preserve context by default
 
         user_input_lower = user_input.lower()
-        # Expanded logic for knowledge assessment to handle varied inputs
-        # In a full implementation, this would use advanced NLP techniques locally
+        # Expanded logic for knowledge assessment to handle varied inputs with categorized indicators
+        # This aims to provide more granular topic detection
         basic_indicators = [
             "não entendo",
             "dificuldade",
@@ -87,6 +88,11 @@ class PromptEngine:
             "explicar",
             "o que é",
             "como funciona",
+            "básico",
+            "começar",
+            "iniciante",
+            "aprendendo",
+            "novo nisso",
         ]
         advanced_indicators = [
             "avançado",
@@ -97,56 +103,209 @@ class PromptEngine:
             "específico",
             "avançar",
             "próximo nível",
+            "expert",
+            "dominar",
+            "aprofundar",
+        ]
+        debugging_indicators = [
+            "erro",
+            "bug",
+            "problema",
+            "não funciona",
+            "travou",
+            "falha",
+            "crash",
+            "depurar",
+            "debug",
+            "corrigir",
+            "resolver",
+        ]
+        project_indicators = [
+            "projeto",
+            "aplicação",
+            "app",
+            "desenvolver",
+            "criar",
+            "construir",
+            "implementar",
+            "sistema",
+            "software",
+            "programa",
         ]
 
+        # Initialize a dictionary to score potential topics based on indicators
+        topic_scores: Dict[str, int] = {
+            "programming_basics": 0,
+            "advanced_topics": 0,
+            "debugging": 0,
+            "project_development": 0,
+        }
+
+        # Score based on indicator matches
         if any(term in user_input_lower for term in basic_indicators):
-            if "programming_basics" not in knowledge_gaps:
-                knowledge_gaps.append("programming_basics")
+            topic_scores["programming_basics"] += 2
             logger.info("Identified potential knowledge gap in programming basics.")
-        elif any(term in user_input_lower for term in advanced_indicators):
-            if "advanced_topics" not in knowledge_gaps:
-                knowledge_gaps.append("advanced_topics")
+        if any(term in user_input_lower for term in advanced_indicators):
+            topic_scores["advanced_topics"] += 2
             logger.info("Identified interest in advanced topics.")
-        else:
-            # Extract potential topics from input to maintain conversation flow
-            programming_topics = [
+        if any(term in user_input_lower for term in debugging_indicators):
+            topic_scores["debugging"] += 2
+            logger.info("Identified potential debugging or error resolution need.")
+        if any(term in user_input_lower for term in project_indicators):
+            topic_scores["project_development"] += 2
+            logger.info("Identified interest in project or application development.")
+
+        # Expanded list of specific programming topics with categorization
+        programming_topics = {
+            "control_structures": [
                 "loop",
                 "laço",
-                "função",
-                "function",
-                "variável",
-                "variable",
-                "condicional",
-                "if",
-                "else",
                 "while",
                 "for",
+                "if",
+                "else",
+                "condicional",
+                "switch",
+                "case",
+            ],
+            "functions": [
+                "função",
+                "function",
+                "método",
+                "method",
+                "procedimento",
+                "chamar",
+                "retornar",
+                "return",
+            ],
+            "variables": [
+                "variável",
+                "variable",
+                "valor",
+                "atribuir",
+                "declarar",
+                "constante",
+                "const",
+                "let",
+                "var",
+            ],
+            "data_structures": [
                 "array",
                 "lista",
                 "objeto",
+                "dicionário",
+                "dictionary",
+                "tupla",
+                "tuple",
+                "set",
+                "estrutura",
+                "dados",
+            ],
+            "oop": [
                 "classe",
                 "class",
-                "método",
-                "method",
+                "objeto",
+                "herança",
+                "inheritance",
+                "polimorfismo",
+                "encapsulamento",
+                "instância",
+            ],
+            "algorithms": [
                 "algoritmo",
+                "algorithm",
+                "ordenar",
+                "sort",
+                "buscar",
+                "search",
+                "recursão",
+                "recursion",
+                "complexidade",
+            ],
+            "coding": [
                 "programação",
                 "coding",
                 "código",
                 "code",
-            ]
-            for topic in programming_topics:
-                if topic in user_input_lower:
-                    if topic not in knowledge_gaps:
-                        knowledge_gaps.append(topic)
-                    logger.info(f"Identified specific topic: {topic}")
-                    break
+                "escrever código",
+                "programar",
+                "desenvolvimento",
+            ],
+        }
+
+        # Score specific topics
+        for category, terms in programming_topics.items():
+            if any(term in user_input_lower for term in terms):
+                if category not in topic_scores:
+                    topic_scores[category] = 0
+                topic_scores[category] += 3  # Higher weight for specific topics
+                logger.info(f"Identified specific topic category: {category}")
+
+        # Attempt to use spaCy for deeper NLP analysis if available
+        try:
+            import spacy
+
+            nlp = spacy.load("en_core_web_sm")
+            doc = nlp(user_input)
+            # Analyze for specific entities or concepts that might indicate a topic
+            for token in doc:
+                if (
+                    token.pos_ in ["NOUN", "PROPN"]
+                    and token.text.lower() in user_input_lower
+                ):
+                    for category, terms in programming_topics.items():
+                        if token.text.lower() in terms:
+                            if category not in topic_scores:
+                                topic_scores[category] = 0
+                            topic_scores[
+                                category
+                            ] += 4  # Even higher weight for NLP-detected terms
+                            logger.info(
+                                f"NLP identified specific topic via token: {category}"
+                            )
+            # Check for dependency patterns indicating questions or confusion
+            for token in doc:
+                if token.dep_ == "ROOT" and token.text.lower() in [
+                    "understand",
+                    "know",
+                    "get",
+                    "learn",
+                    "explain",
+                ]:
+                    topic_scores["programming_basics"] += 1
+                    logger.info(
+                        "NLP identified potential confusion or learning intent."
+                    )
+        except ImportError:
+            logger.warning(
+                "spaCy not available for NLP analysis; relying on keyword matching."
+            )
+        except Exception as e:
+            logger.warning(
+                f"spaCy processing failed: {str(e)}; falling back to keyword analysis."
+            )
+
+        # Determine the most relevant topics based on scores
+        prioritized_gaps = []
+        for topic, score in topic_scores.items():
+            if score > 0:
+                prioritized_gaps.append((topic, score))
+
+        # Sort by score in descending order to prioritize highly relevant topics
+        prioritized_gaps.sort(key=lambda x: x[1], reverse=True)
+        new_gaps = [gap[0] for gap in prioritized_gaps]
+
+        if new_gaps:
+            knowledge_gaps = new_gaps
+            logger.info(f"Prioritized knowledge gaps based on input: {knowledge_gaps}")
+        else:
             # If no specific topic or indicator, retain current gaps to avoid resetting
-            if not knowledge_gaps and current_gaps:
+            if current_gaps:
                 logger.info(
                     "No new knowledge gaps identified; retaining current context."
                 )
-            elif not knowledge_gaps:
-                knowledge_gaps.append("general_query")
+            else:
+                knowledge_gaps = ["general_query"]
                 logger.info(
                     "No specific knowledge gap identified; treating as general query."
                 )
@@ -206,6 +365,7 @@ class PromptEngine:
     def retrieve_content(self, topic: str) -> Optional[Dict[str, Any]]:
         """
         Retrieve relevant content from indexed data based on the topic or knowledge gap.
+        Includes expanded fallback mechanisms for general queries and specific topics to ensure meaningful responses.
 
         Args:
             topic (str): The topic or knowledge gap to address.
@@ -223,7 +383,9 @@ class PromptEngine:
         results = []
         try:
             if hasattr(self.indexed_data, "search_by_similarity"):
-                results = self.indexed_data.search_by_similarity(topic, k=1)
+                results = self.indexed_data.search_by_similarity(
+                    topic, k=3
+                )  # Increased to get more potential matches
                 logger.info(f"Performed semantic search for topic: {topic}")
         except Exception as e:
             logger.warning(f"Semantic search failed for {topic}: {str(e)}")
@@ -233,25 +395,75 @@ class PromptEngine:
             logger.info(f"Performed keyword search for topic: {topic}")
 
         if results:
-            # Return the first matching result
-            resource = results[0]
-            logger.info(f"Retrieved content for topic: {topic}")
-            content = resource.get("content", None)
-            if content is None or content == "Content not available.":
-                logger.warning(f"Content is empty or unavailable for topic: {topic}")
-                return None
-            return {
-                "title": resource["metadata"].get("file_name", "Untitled"),
-                "type": resource["metadata"].get("file_type", "text").lstrip("."),
-                "content": content,
-            }
+            # Return the first matching result with valid content
+            for resource in results:
+                content = resource.get("content", None)
+                if content and content != "Content not available.":
+                    logger.info(f"Retrieved content for topic: {topic}")
+                    return {
+                        "title": resource["metadata"].get("file_name", "Untitled"),
+                        "type": resource["metadata"]
+                        .get("file_type", "text")
+                        .lstrip("."),
+                        "content": content,
+                    }
+            logger.warning(f"Content is empty or unavailable for topic: {topic}")
+            # If no valid content found in results, proceed to fallback
 
-        logger.warning(f"No content found for topic: {topic}")
+        # Expanded fallback mechanism for both general queries and specific topics
+        fallback_topics = []
+        if topic == "general_query":
+            fallback_topics = [
+                "programming_basics",
+                "fundamentals",
+                "introduction",
+                "basics",
+                "coding",
+                "programação",
+            ]
+            logger.info("Using fallback for general query.")
+        else:
+            # For specific topics, try related broader terms as fallback
+            fallback_mapping = {
+                "control_structures": ["programming_basics", "coding"],
+                "functions": ["programming_basics", "coding"],
+                "variables": ["programming_basics", "coding"],
+                "data_structures": ["programming_basics", "advanced_topics"],
+                "oop": ["advanced_topics", "programming_basics"],
+                "algorithms": ["advanced_topics", "programming_basics"],
+                "debugging": ["programming_basics", "coding"],
+                "project_development": ["coding", "programming_basics"],
+                "advanced_topics": ["coding", "programming_basics"],
+                "programming_basics": ["coding", "introduction"],
+                "coding": ["programming_basics", "introduction"],
+            }
+            fallback_topics = fallback_mapping.get(
+                topic, ["programming_basics", "coding"]
+            )
+            logger.info(f"Using fallback for specific topic: {topic}")
+
+        # Iterate through fallback topics to find any relevant content
+        for fallback in fallback_topics:
+            results = self.indexed_data.search_by_keyword(fallback)
+            if results:
+                for resource in results:
+                    content = resource.get("content", None)
+                    if content and content != "Content not available.":
+                        logger.info(f"Retrieved fallback content using: {fallback}")
+                        return {
+                            "title": resource["metadata"].get("file_name", "Untitled"),
+                            "type": resource["metadata"]
+                            .get("file_type", "text")
+                            .lstrip("."),
+                            "content": content,
+                        }
+        logger.warning(f"No fallback content found for topic: {topic}")
         return None
 
     def adapt_content(self, content: Dict[str, Any]) -> Dict[str, Any]:
         """
         Adapt the retrieved content to the user's preferred format and complexity level using ContentGenerator.
+        Summarizes long content for user-friendly responses.
 
         Args:
             content (Dict[str, Any]): The raw content to adapt.
@@ -264,12 +476,56 @@ class PromptEngine:
             return content
 
         topic = content.get("title", "unknown topic")
-        # Use the correct method name 'generate' instead of 'generate_content'
+        raw_content = content.get("content", "")
+
+        # Summarize content if it's too long
+        max_length = 500  # Approximate character limit for summary
+        if len(raw_content) > max_length:
+            logger.info(f"Content for {topic} is long; summarizing.")
+            # Use the content generator to create a summary
+            adapted_content = self.content_generator.generate(
+                self.user_context.get("knowledge_gaps", {}),
+                [
+                    f"Resuma o seguinte conteúdo sobre {topic} em até {max_length} caracteres: {raw_content}"
+                ],
+            )
+            if adapted_content is None or (
+                isinstance(adapted_content, dict)
+                and not adapted_content.get("content", "")
+            ):
+                logger.warning(f"Failed to generate summary for topic: {topic}")
+                # Manual summary as fallback with a human-friendly introduction
+                summary = f"Este conteúdo aborda {topic}. Aqui está um trecho inicial para você ter uma ideia: {raw_content[:max_length]}... (continua)"
+                content["content"] = summary
+                return content
+            elif isinstance(adapted_content, str):
+                # Check if the returned string contains the prompt itself, indicating no actual summary
+                if f"Resuma o seguinte conteúdo sobre {topic}" in adapted_content:
+                    logger.warning(
+                        f"Content generator returned prompt instead of summary for topic: {topic}"
+                    )
+                    summary = f"Este conteúdo aborda {topic}. Aqui está um trecho inicial para você ter uma ideia: {raw_content[:max_length]}... (continua)"
+                    content["content"] = summary
+                else:
+                    content["content"] = adapted_content
+                return content
+            return adapted_content
+
+        # Use the content generator for format adaptation if needed
         adapted_content = self.content_generator.generate(
-            self.user_context.get("knowledge_gaps", {}), [content.get("content", "")]
+            self.user_context.get("knowledge_gaps", {}), [raw_content]
         )
         if adapted_content is None:
             logger.warning(f"Failed to generate adapted content for topic: {topic}")
+            return content
+        elif isinstance(adapted_content, str):
+            # Ensure the string is actual content and not a prompt or error message
+            if "Resuma o seguinte conteúdo" in adapted_content:
+                logger.warning(
+                    f"Content generator returned prompt instead of content for topic: {topic}"
+                )
+                return content
+            content["content"] = adapted_content
             return content
 
         return adapted_content
@@ -303,7 +559,11 @@ class PromptEngine:
                 "content": (
                     content
                     if content
-                    else "Hmm, ainda não achei um conteúdo que se encaixe perfeitamente. Que tal a gente continuar conversando pra eu entender melhor o que você precisa?"
+                    else {
+                        "title": "Introdução à Programação",
+                        "type": "text",
+                        "content": "Parece que não encontrei um conteúdo específico no momento. Vamos falar mais sobre o que você está buscando? Programação é uma habilidade incrível que envolve resolver problemas com código. Se você está começando, posso te ajudar com conceitos básicos como variáveis, loops e condições. Se já tem experiência, podemos explorar tópicos mais avançados. Me conta mais sobre o que você quer aprender!",
+                    }
                 ),
                 "status": "success",
             }

@@ -34,37 +34,60 @@ import re
 
 import logging
 
+# Configure logging for the web app to align with other modules
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 @app.post("/api/message")
 async def post_message(user_input: UserInput):
-    user_message = user_input.message.lower()
-    logging.info(f"Received user message: {user_message}")
+    user_message = user_input.message
+    logger.info(f"Received user message: {user_message}")
+
+    # Define default values for prompt to avoid UnboundLocalError in case of exception
+    prompt = "Oi! Como posso te ajudar com programação hoje?"
+    content = None
 
     try:
-        if "html" in user_message:
-            with open("resources/Apresentação.txt", "r", encoding="utf-8") as f:
-                content = f.read()
-            response_text = content[:700] + "..."
-        elif (
-            "exercício" in user_message
-            or "exercicios" in user_message
-            or "questão" in user_message
-        ):
-            with open("resources/Exercícios.json", "r", encoding="utf-8") as f:
-                exercises = json.load(f)
-            first_question = exercises["content"][0]
-            question_title = first_question.get("title", "Questão")
-            question_html = first_question["content"].get("html", "")
-            question_text = re.sub(r"<[^>]+>", "", question_html).strip()
-            response_text = f"{question_title}: {question_text}"
-        elif "vídeo" in user_message or "video" in user_message:
-            response_text = "Você prefere aprender com vídeos? Temos dicas de professores em vídeo para você."
+        from adaptive_learning.prompt.prompt_engine import PromptEngine
+        from adaptive_learning.indexing.index_manager import IndexManager
+
+        # Initialize or retrieve the PromptEngine instance for this user
+        # For simplicity, create a new instance per request; in production, maintain user sessions
+        # TODO: Implement session management to persist user context across requests using user_id
+        engine = PromptEngine()
+        index_manager = IndexManager()
+        from adaptive_learning.content_generation.content_generator import (
+            ContentGenerationFactory,
+        )
+
+        content_generator = ContentGenerationFactory.get_generator("text")
+        engine.content_generator = content_generator
+        engine.set_indexed_data(index_manager)
+
+        # Process user interaction through the PromptEngine
+        response_data = engine.process_user_interaction(user_message)
+
+        # Extract prompt and content from the response
+        prompt = response_data.get(
+            "prompt", "Oi! Como posso te ajudar com programação hoje?"
+        )
+        content = response_data.get("content", None)
+
+        if content and isinstance(content, dict):
+            response_text = f"{content.get('title', 'Conteúdo')}: {content.get('content', 'Conteúdo não disponível no momento.')}"
+            if content.get("type"):
+                response_text = (
+                    f"Tipo: {content.get('type').capitalize()}\n{response_text}"
+                )
         else:
             response_text = (
-                "Conteúdo adaptativo será gerado aqui com base nas suas necessidades."
+                content
+                if isinstance(content, str)
+                else "Desculpe, não consegui encontrar conteúdo relevante no momento. Pode me dar mais detalhes sobre o que você precisa?"
             )
     except Exception as e:
-        logging.error(f"Error processing message: {e}")
-        response_text = "Desculpe, ocorreu um erro ao processar sua solicitação."
+        logger.error(f"Error processing message: {str(e)}")
+        response_text = "Ops, algo deu errado ao processar sua mensagem. Que tal tentar de novo ou explicar de outra forma? Estou aqui pra ajudar!"
 
-    return {"response": response_text}
+    return {"response": response_text, "prompt": prompt}

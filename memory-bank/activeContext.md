@@ -2,74 +2,81 @@
 
 ## Current Work Focus
 
-- Developed and integrated the Adaptive Prompt Engine Prototype (Milestone 3) into the system, enabling interactive user
-  dialogue to assess knowledge gaps and deliver personalized content.
-- Localized the prompt engine and user interface in 'run.py' to support Brazilian Portuguese (PT-BR) interaction,
-  aligning with user requirements for language-specific engagement.
-- Resolved syntax errors and formatting issues in 'prompt_engine.py' to ensure the codebase is functional and ready for
-  testing.
-- Implemented a retry mechanism for temporary file deletion in 'video_ingestor.py' to address warnings during video
-  processing, reducing the risk of disk space issues.
-- Confirmed the installation of the spaCy model 'en_core_web_sm' for enhanced text processing, resolving any previous
-  warnings about its absence.
-- Developed a web-based user interface using FastAPI and React, providing a conversational chat interface for adaptive
-  learning.
-- Integrated the React frontend build process into the Dockerfile, ensuring the web UI is built and served correctly in
-  both local and containerized environments.
-- Enhanced backend adaptive content generation logic to dynamically serve content from indexed resources in the
-  'resources/' directory based on user input keywords.
-- Updated project documentation with detailed setup and run instructions for both local and Docker environments,
-  including frontend build and backend startup.
-- Fixed abstract class instantiation error by using ContentGenerationFactory to instantiate concrete content generators.
-- Corrected method call in PromptEngine to use 'generate' instead of 'generate_content' for content adaptation.
-- Improved content retrieval to handle empty or unavailable content gracefully.
-- Verified smooth operation of run.py and web UI both locally and in Docker.
-- Identified opportunity to improve knowledge gap classification and general query handling for better user experience.
+- Enhanced the `PromptEngine` in `prompt_engine.py` to improve knowledge gap assessment by integrating spaCy for deeper
+  NLP analysis, enabling more accurate topic classification based on semantic understanding of user input.
+- Improved content retrieval mechanisms in `PromptEngine` with an expanded fallback system to ensure meaningful
+  responses for both general queries and specific topics, enhancing user experience.
+- Integrated the web-based UI in `web_app.py` with `PromptEngine`, allowing the FastAPI backend to dynamically process
+  user messages and deliver personalized content through the API endpoint, with improved logging and error handling.
+- Developed a testing strategy by updating `test_integration.py` with comprehensive test cases for API integration,
+  covering basic responses, fallback scenarios for general queries, and updated error handling to validate end-to-end
+  functionality.
+- Updated `run.py` to support both CLI and web UI interaction modes, adding an option to start the FastAPI server and
+  improving error handling for robustness.
+- Updated project documentation, including `COMMENTS.md`, to reflect architecture decisions, third-party libraries,
+  potential improvements, and unmet requirements, ensuring traceability to PRD success criteria.
+- Maintained localization to Brazilian Portuguese (PT-BR) for user-facing interactions, aligning with user requirements
+  for language-specific engagement.
+- Ensured all processing remains local and privacy-respecting, adhering to project non-functional requirements.
 
 ## Recent Changes
 
-- Created 'adaptive_learning/ui/web_app.py' implementing FastAPI backend serving the React frontend and handling
-  adaptive content API requests.
-- Scaffolded React frontend in 'adaptive_learning/ui/frontend' with chat interface components and build scripts.
-- Updated Dockerfile to install Node.js, build React frontend, and serve it via FastAPI backend.
-- Updated 'adaptive_learning/ui/README.md' with comprehensive instructions for running the system locally and in Docker.
-- Updated run.py to instantiate appropriate content generator and integrate with PromptEngine correctly.
-- Updated PromptEngine to fix content adaptation and retrieval logic.
-- Updated Dockerfile to install pyttsx3 and its dependencies to fix module errors in Docker.
-- Added fallback handling for empty content in PromptEngine.
-- Updated Memory Bank files to reflect current project state and technical decisions.
+- Updated `prompt_engine.py` to incorporate spaCy for NLP-based topic classification, expanded fallback mechanisms for
+  content retrieval, and fixed minor typos in indicator lists.
+- Modified `web_app.py` to integrate with `PromptEngine`, enabling dynamic content generation based on user input
+  through the FastAPI API endpoint, with added logging configuration and user-friendly error messages in Brazilian
+  Portuguese.
+- Enhanced `test_integration.py` with new test cases for web app integration, including general query fallback
+  responses, and updated error handling messages to match the current implementation.
+- Updated `run.py` to include an option for starting the web UI server with FastAPI, improved error handling for
+  ingestion and indexing, and added consistent logging configuration.
+- Revised `COMMENTS.md` with detailed architecture decisions, updated library list, future improvements, and status of
+  unmet requirements.
+- Reviewed and updated Memory Bank files to capture the current project state, technical decisions, and next steps for
+  continuity.
 
 ## Next Steps
 
-- Enhance knowledge gap assessment to better classify user inputs into specific topics.
-- Improve content retrieval and indexing to provide meaningful responses for general queries.
-- Add default fallback content for general queries to improve user experience.
-- Conduct further testing and gather user feedback on the improved system.
-- Continue updating Memory Bank and documentation as development progresses.
+- Refine the web UI for improved usability, adding features like session persistence and user preference selection for
+  content format (text, video, audio).
+- Conduct further end-to-end testing to validate UI responsiveness and content adaptation accuracy across different user
+  scenarios.
+- Gather user feedback on the system's effectiveness in identifying knowledge gaps and delivering relevant content to
+  inform further iterations.
+- Explore advanced NLP integration (e.g., LangChain, LlamaIndex) for more nuanced content generation and user
+  interaction.
+- Finalize repository management and delivery steps as per project instructions, including forking, pushing code, and
+  notifying the recruiter.
 
 ## Active Decisions and Considerations
 
-- Prioritized a web-based UI using FastAPI and React for accessibility and modern user experience.
-- Ensured all processing remains local and privacy-respecting, including video transcription and content generation.
-- Adopted modular design patterns and clear separation of concerns for maintainability and extensibility.
-- Integrated frontend build into Docker to streamline deployment and consistency across environments.
-- Maintained detailed documentation and logging to support development and review.
-- Recognized the need for improved knowledge gap classification and general query handling for better content relevance.
+- Prioritized integration of `PromptEngine` with the web UI to deliver adaptive content dynamically, enhancing the
+  conversational experience.
+- Focused on NLP enhancements for better knowledge gap classification, recognizing the importance of semantic
+  understanding for personalized learning.
+- Ensured modular design and clear separation of concerns to support maintainability and future extensibility of the
+  system.
+- Maintained emphasis on local processing for privacy, ensuring no external data sharing occurs during content
+  generation or user interaction.
+- Committed to detailed documentation and iterative development to facilitate project review and continuous improvement.
 
 ## Important Patterns and Preferences
 
-- Modular architecture with distinct ingestion, indexing, prompt engine, content generation, and UI components.
-- Use of keyword-based adaptive content generation as a starting point, with plans for more advanced NLP integration.
-- Localization to Brazilian Portuguese for all user-facing text and interaction.
-- Emphasis on iterative development with continuous feedback loops.
+- Modular architecture with distinct ingestion, indexing, prompt engine, content generation, and UI components for clear
+  responsibility boundaries.
+- Use of NLP-enhanced topic classification and fallback content retrieval to improve relevance and user satisfaction.
+- Localization to Brazilian Portuguese for all user-facing text and interaction to meet regional user needs.
+- Emphasis on iterative development with continuous feedback loops to refine system capabilities based on user input.
 
 ## Learnings and Project Insights
 
-- Integrating React frontend build into Docker requires Node.js installation and careful file copying.
-- Serving a React SPA via FastAPI is effective for combining backend logic and frontend UI in a single container.
-- Keyword matching provides a simple but effective initial adaptive content approach, with room for future NLP
-  enhancements.
-- Detailed documentation and clear setup instructions are critical for smooth developer and user experience.
-- Handling empty or unavailable content gracefully improves system robustness.
-- Proper instantiation of concrete content generators is essential to avoid abstract class errors.
-- System runs smoothly on both localhost and Docker with appropriate dependency management.
+- Integrating spaCy for NLP analysis significantly improves the accuracy of knowledge gap assessment over simple keyword
+  matching.
+- Dynamic integration of FastAPI with `PromptEngine` enables a seamless conversational interface, critical for adaptive
+  learning.
+- Comprehensive testing of API endpoints is essential to validate integration and handle edge cases like content
+  unavailability or processing errors.
+- Detailed documentation in `COMMENTS.md` and Memory Bank files ensures project traceability and supports effective
+  communication with reviewers.
+- Expanded fallback mechanisms in content retrieval prevent user frustration by providing meaningful responses even when
+  specific content is unavailable.

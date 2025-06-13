@@ -132,13 +132,15 @@ flowchart TD
 ## 8. Technology Stack
 
 - **Python 3.8+**
-- Text/PDF: PyPDF2, pdfminer.six, nltk, spaCy
-- Video: OpenAI Whisper (Python), Google Speech-to-Text API (Python client), Vosk (Python, using
-  'vosk-model-small-pt-0.3' for Brazilian Portuguese content; attempted use of 'vosk-model-pt-fb-v0.1.1-20220516_2113'
-  for higher accuracy failed due to model loading error, reverted to 'vosk-model-small-pt-0.3')
+- Text/PDF: PyPDF2, pdfminer.six, nltk, spaCy (used for enhanced NLP in knowledge gap assessment)
+- Video: Vosk (Python, using 'vosk-model-small-pt-0.3' for Brazilian Portuguese content, confirmed operational for local
+  transcription)
 - Image: Pillow, exifread
-- Search: Elasticsearch (Python client), Pinecone (Python client), FAISS, other Python-based vector DBs
-- Prompt Engine: LangChain, LlamaIndex, OpenAI API (Python integration)
+- Search: Elasticsearch (Python client), Pinecone (Python client), FAISS, other Python-based vector DBs (for potential
+  semantic search enhancements)
+- Prompt Engine: Custom implementation with spaCy for NLP-based topic classification, fallback content retrieval
+  mechanisms
+- Web UI: FastAPI (backend), React (frontend for conversational interface)
 - Containerization for isolation (Docker)
 - Dependency management via requirements.txt or poetry
 
@@ -148,14 +150,19 @@ flowchart TD
 
 1. **Project Setup & Documentation** (Complete)
 2. **Data Ingestion & Indexing Modules** (Text, PDF, Video, Image) - Completed, with video transcription fully
-   operational using 'vosk-model-small-pt-0.3' for Brazilian Portuguese content; ongoing exploration of alternative
-   models for improved accuracy
-3. **Adaptive Prompt Engine Prototype**
-4. **Content Generation Module**
-5. **User Interface Implementation**
-6. **Integration & Testing**
-7. **Documentation Finalization**
-8. **Repository Management & Delivery**
+   operational using 'vosk-model-small-pt-0.3' for Brazilian Portuguese content
+3. **Adaptive Prompt Engine Prototype** - Completed, enhanced with spaCy for NLP-based knowledge gap assessment and
+   improved content retrieval mechanisms
+4. **Content Generation Module** - Partially complete, with basic content adaptation in place; advanced NLP integration
+   pending
+5. **User Interface Implementation** - Partially complete, basic web UI implemented using FastAPI and React, integrated
+   with Prompt Engine; usability refinements pending
+6. **Integration & Testing** - Partially complete, integration tests added for API endpoint; further end-to-end testing
+   for UI and content accuracy needed
+7. **Documentation Finalization** - Partially complete, updated COMMENTS.md and Memory Bank files; final refinements
+   pending
+8. **Repository Management & Delivery** - Pending, to be completed as per project instructions for forking, pushing, and
+   notifying recruiter
 
 ---
 
